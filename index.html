@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cricket Yoddha Live</title>
 <style>
-/* ===== Global Page Setup ===== */
+/* ===== Global Setup ===== */
 * {
   margin: 0;
   padding: 0;
@@ -117,8 +117,9 @@ h1 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 80px;
+  margin-top: 90px;
   width: 100%;
+  position: relative;
 }
 
 video {
@@ -130,28 +131,30 @@ video {
   margin-bottom: 15px;
 }
 
-/* ===== Quality Button ===== */
+/* ===== Quality Button (Fixed on Video Corner) ===== */
 #qualityBtn {
   position: absolute;
   top: 15px;
   right: 25px;
-  background: rgba(0,0,30,0.85);
+  background: rgba(0, 30, 60, 0.9);
   color: #fff;
   border: 1px solid #00aaff;
-  border-radius: 6px;
-  padding: 8px 12px;
+  border-radius: 8px;
+  padding: 8px 14px;
   cursor: pointer;
   z-index: 99;
-  font-size: 14px;
+  font-size: 15px;
+  box-shadow: 0 0 10px rgba(0,170,255,0.4);
+  transition: all 0.3s ease;
 }
 #qualityBtn:hover {
-  background: #002a5c;
+  background: #003366;
 }
 
 /* ===== Quality Menu ===== */
 .quality-menu {
   position: absolute;
-  top: 50px;
+  top: 60px;
   right: 25px;
   background: #001a33;
   border: 1px solid #00aaff;
@@ -228,6 +231,16 @@ video {
 @media (max-width: 600px) {
   h1 { font-size: 22px; }
   video { width: 95%; }
+  #qualityBtn {
+    top: 10px;
+    right: 15px;
+    font-size: 13px;
+    padding: 7px 10px;
+  }
+  .quality-menu {
+    top: 50px;
+    right: 15px;
+  }
 }
 </style>
 </head>
