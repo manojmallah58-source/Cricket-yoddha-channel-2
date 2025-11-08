@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,7 +15,6 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  overflow-x: hidden;
   text-align: center;
 }
 
@@ -115,6 +113,11 @@ h1 {
   justify-content: center;
 }
 
+.video-container {
+  position: relative;
+  display: inline-block;
+}
+
 video {
   width: 90%;
   max-width: 850px;
@@ -128,17 +131,17 @@ video {
 /* Quality Button */
 #qualityBtn {
   position: absolute;
-  top: 10px;
-  right: 25px;
+  bottom: 60px;
+  right: 55px;
   background: rgba(0,0,30,0.8);
   color: #fff;
   border: 1px solid #00aaff;
   border-radius: 6px;
-  padding: 8px 12px;
+  padding: 6px 10px;
   cursor: pointer;
   z-index: 999;
   font-size: 14px;
-  box-shadow: 0 0 10px rgba(0,170,255,0.3);
+  display: none;
 }
 #qualityBtn:hover {
   background: #002a5c;
@@ -147,8 +150,8 @@ video {
 /* Quality Menu */
 .quality-menu {
   position: absolute;
-  top: 50px;
-  right: 25px;
+  bottom: 100px;
+  right: 55px;
   background: #001a33;
   border: 1px solid #00aaff;
   border-radius: 8px;
@@ -214,17 +217,6 @@ video {
 .back-link:hover {
   color: #fff;
 }
-
-/* Responsive Center Alignment */
-@media (max-width: 600px) {
-  video {
-    width: 95%;
-    height: auto;
-  }
-  h1 {
-    font-size: 22px;
-  }
-}
 </style>
 </head>
 <body>
@@ -244,9 +236,11 @@ video {
 
 <!-- Video Box -->
 <div id="video-box">
-  <button id="qualityBtn" onclick="toggleQuality()">⚙ Quality</button>
-  <div id="qualityMenu" class="quality-menu"></div>
-  <video id="video" controls playsinline></video>
+  <div class="video-container">
+    <video id="video" controls playsinline></video>
+    <button id="qualityBtn" onclick="toggleQuality()">⚙</button>
+    <div id="qualityMenu" class="quality-menu"></div>
+  </div>
 </div>
 
 <!-- Buttons Below Video -->
@@ -296,6 +290,7 @@ function toggleQuality() {
 
 function initPlayer() {
   const v = document.getElementById("video");
+  const btn = document.getElementById("qualityBtn");
   if (Hls.isSupported()) {
     const hls = new Hls();
     hls.loadSource(stream);
@@ -306,6 +301,11 @@ function initPlayer() {
   } else if (v.canPlayType("application/vnd.apple.mpegurl")) {
     v.src = stream;
   }
+
+  // Show quality button only when video starts playing
+  v.addEventListener("play", () => {
+    btn.style.display = "block";
+  });
 }
 
 function joinNow() {
