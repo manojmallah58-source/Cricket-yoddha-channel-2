@@ -6,21 +6,22 @@
 <title>Cricket Yoddha Live</title>
 <style>
 body {
+  margin: 0;
   background: #000;
   color: #fff;
   font-family: Arial, sans-serif;
-  margin: 0;
   text-align: center;
+  overflow-x: hidden;
 }
 
 /* Header */
 h1 {
   background: #000;
   color: #ffeb3b;
+  font-size: 28px;
+  font-weight: bold;
   margin: 0;
   padding: 12px 0;
-  font-size: 28px;
-  letter-spacing: 1px;
 }
 
 /* Popup */
@@ -28,49 +29,57 @@ h1 {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0,0,0,0.95);
+  background: rgba(0, 0, 0, 0.95);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 10;
 }
+
 .popup-box {
-  background: #111;
-  border: 1px solid #ff0000;
-  border-radius: 15px;
-  box-shadow: 0 0 20px rgba(255,0,0,0.6);
-  padding: 25px;
   width: 85%;
   max-width: 400px;
+  background: #111;
+  padding: 25px;
+  border-radius: 15px;
+  text-align: center;
+  border: 1px solid #ff0000;
+  box-shadow: 0 0 25px rgba(255, 0, 0, 0.7);
 }
+
 .popup-box h2 {
-  color: #fff;
   font-size: 22px;
-  margin-bottom: 15px;
+  color: #fff;
+  margin-bottom: 10px;
 }
+
 .popup-box p {
-  color: #bfbfbf;
-  font-size: 16px;
+  color: #bbb;
+  font-size: 15px;
   margin-bottom: 20px;
+  line-height: 1.4;
 }
+
 .btn-join, .btn-joined {
   width: 100%;
   border: none;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 17px;
   cursor: pointer;
   font-weight: bold;
-  transition: 0.3s;
   margin-bottom: 10px;
+  transition: 0.3s;
 }
+
 .btn-join {
-  background: #ff0000;
+  background: linear-gradient(90deg, #00b4db, #0083b0);
   color: #fff;
 }
 .btn-join:hover {
-  background: #e60000;
+  opacity: 0.9;
 }
+
 .btn-joined {
   background: #222;
   color: #fff;
@@ -80,16 +89,18 @@ h1 {
   background: #333;
 }
 
-/* Video Box */
+/* Video Section */
 #video-box {
   display: none;
   position: relative;
   background: #000;
 }
+
 video {
   width: 100%;
-  height: auto;
+  height: 65vh;
   background: #000;
+  object-fit: contain;
 }
 
 /* Quality Button */
@@ -97,14 +108,15 @@ video {
   position: absolute;
   top: 10px;
   right: 10px;
-  z-index: 999;
   background: rgba(0,0,0,0.8);
   color: #fff;
-  padding: 8px 12px;
-  border-radius: 7px;
-  cursor: pointer;
   border: 1px solid #ff0000;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  z-index: 999;
   font-size: 14px;
+  box-shadow: 0 0 10px rgba(255,0,0,0.5);
 }
 #qualityBtn:hover {
   background: #111;
@@ -113,15 +125,14 @@ video {
 /* Quality Menu */
 .quality-menu {
   position: absolute;
-  top: 45px;
+  top: 50px;
   right: 10px;
   background: #000;
-  color: #fff;
-  padding: 10px;
+  border: 1px solid #ff0000;
   border-radius: 8px;
+  padding: 10px;
   display: none;
   z-index: 1000;
-  border: 1px solid #ff0000;
   box-shadow: 0 0 15px rgba(255,0,0,0.5);
 }
 .quality-item {
@@ -132,51 +143,49 @@ video {
   background: #222;
 }
 
-/* Buttons Section (Below Video) */
+/* Buttons Section */
 .buttons-box {
   background: #111;
-  padding: 20px;
   border-radius: 10px;
+  padding: 18px;
   width: 90%;
   max-width: 400px;
-  margin: 20px auto;
+  margin: 15px auto;
   box-shadow: 0 0 15px rgba(255,255,255,0.1);
 }
+
 .section-title {
-  font-size: 16px;
   color: #ccc;
+  font-size: 16px;
   margin-bottom: 8px;
 }
-.btn {
+
+.btn-blue {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   width: 100%;
   background: linear-gradient(90deg, #00b4db, #0083b0);
+  color: #fff;
   border: none;
-  padding: 12px;
   border-radius: 8px;
-  color: white;
+  padding: 12px;
   font-size: 16px;
   font-weight: bold;
-  cursor: pointer;
-  margin-bottom: 12px;
-  transition: 0.3s;
   text-decoration: none;
+  transition: 0.3s;
 }
-.btn:hover {
+.btn-blue:hover {
   opacity: 0.9;
 }
-.btn svg {
-  width: 18px;
-  height: 18px;
-}
+
+/* Back Link */
 .back-link {
   display: inline-block;
-  margin: 10px 0 25px;
   color: #bbb;
   text-decoration: none;
+  margin: 20px 0;
   font-size: 15px;
 }
 .back-link:hover {
@@ -186,40 +195,35 @@ video {
 </head>
 <body>
 
-<h1>CRICKET YODDHA</h1>
-
 <!-- Popup -->
 <div id="popup">
   <div class="popup-box">
     <h2>📣 Support Us!</h2>
-    <p>Join our Telegram channel <b>Cricket Yoddha</b> for instant updates, highlights, and exclusive links.</p>
-    <button class="btn-join" onclick="joinNow()">Join Now</button>
+    <p>Join our Telegram channel <b>Cricket Yoddha</b> for instant updates, highlights & exclusive links.</p>
+    <button class="btn-join" onclick="joinNow()">Join Telegram</button>
     <button class="btn-joined" onclick="already()">Already Joined</button>
   </div>
 </div>
 
-<!-- Video Section -->
+<!-- Header -->
+<h1>CRICKET YODDHA</h1>
+
+<!-- Video Box -->
 <div id="video-box">
   <button id="qualityBtn" onclick="toggleQuality()">⚙ Quality</button>
   <div id="qualityMenu" class="quality-menu"></div>
-  <video id="video" playsinline controls></video>
+  <video id="video" controls playsinline></video>
 </div>
 
 <!-- Buttons Below Video -->
 <div class="buttons-box">
   <div class="section-title">🔔 Follow us for Updates!</div>
-  <a href="https://t.me/+rwZKMV0-L8wyOTll" target="_blank" class="btn">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M9.03 12.47 9 15.74a.75.75 0 0 0 1.2.6l2.5-1.9 2.75 2.01a1.5 1.5 0 0 0 2.35-.8l2.94-10.62a1.25 1.25 0 0 0-1.64-1.53L3.44 9.16a1 1 0 0 0 .06 1.89l5.53 1.42Zm8.06-5.11-7.28 3.06 2.89.76a.75.75 0 0 1 .53.53l.77 2.88 3.09-7.23Z"/></svg>
-    Click Here To Join Telegram
-  </a>
+  <a href="https://t.me/+rwZKMV0-L8wyOTll" target="_blank" class="btn-blue">Click Here To Join Telegram</a>
 </div>
 
 <div class="buttons-box">
   <div class="section-title">🔗 Copy Link & Share</div>
-  <button class="btn" onclick="sharePage()">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M13.5 5.5v3h-2v-3h-2l3-3 3 3h-2Zm-8 7h13a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Zm1 7h11v-5H6.5v5Z"/></svg>
-    Click Here To Share This Page Link
-  </button>
+  <button class="btn-blue" onclick="sharePage()">Click Here To Share This Page Link</button>
 </div>
 
 <a href="index.html" class="back-link">← Back to All Streams</a>
@@ -227,7 +231,6 @@ video {
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
 const stream = "https://smart.bengaldigital.live/AstroCricket/index.m3u8";
-const video = document.getElementById("video");
 
 function showQualityMenu(levels, hls) {
   const menu = document.getElementById("qualityMenu");
@@ -236,42 +239,51 @@ function showQualityMenu(levels, hls) {
     const opt = document.createElement("div");
     opt.className = "quality-item";
     opt.innerText = level.height + "p";
-    opt.onclick = () => { hls.currentLevel = i; menu.style.display = "none"; };
+    opt.onclick = () => {
+      hls.currentLevel = i;
+      menu.style.display = "none";
+    };
     menu.appendChild(opt);
   });
   const auto = document.createElement("div");
   auto.className = "quality-item";
   auto.innerText = "Auto";
-  auto.onclick = () => { hls.currentLevel = -1; menu.style.display = "none"; };
+  auto.onclick = () => {
+    hls.currentLevel = -1;
+    menu.style.display = "none";
+  };
   menu.appendChild(auto);
 }
 
-function toggleQuality(){
-  let menu = document.getElementById("qualityMenu");
+function toggleQuality() {
+  const menu = document.getElementById("qualityMenu");
   menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
 
-function initPlayer(){
-  if(Hls.isSupported()){
+function initPlayer() {
+  const v = document.getElementById("video");
+  if (Hls.isSupported()) {
     const hls = new Hls();
     hls.loadSource(stream);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, function(_, data){
+    hls.attachMedia(v);
+    hls.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
       showQualityMenu(data.levels, hls);
     });
-  } else {
-    video.src = stream;
+  } else if (v.canPlayType("application/vnd.apple.mpegurl")) {
+    v.src = stream;
   }
 }
 
-function joinNow(){
-  window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
+function joinNow() {
+  window.open("https://t.me/+rwZKMV0-L8wyOTll", "_blank");
 }
-function already(){
-  document.getElementById("popup").style.display="none";
-  document.getElementById("video-box").style.display="block";
+
+function already() {
+  document.getElementById("popup").style.display = "none";
+  document.getElementById("video-box").style.display = "block";
   initPlayer();
 }
+
 function sharePage() {
   const url = window.location.href;
   if (navigator.share) {
