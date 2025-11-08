@@ -8,15 +8,14 @@
 <style>
 body {
   margin: 0;
+  padding: 0;
   background: #00152a;
   color: #fff;
   font-family: Arial, sans-serif;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
-  overflow-x: hidden;
 }
 
 /* Header */
@@ -25,10 +24,12 @@ h1 {
   color: #00bfff;
   font-size: 28px;
   font-weight: bold;
-  width: 100%;
   text-align: center;
+  width: 100%;
   margin: 0;
-  padding: 12px 0;
+  padding: 14px 0;
+  letter-spacing: 1px;
+  box-shadow: 0 0 10px rgba(0,180,255,0.2);
 }
 
 /* Popup */
@@ -36,27 +37,33 @@ h1 {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0, 10, 25, 0.97);
+  background: rgba(0,10,25,0.97);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 10;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
 }
 
 .popup-box {
-  width: 90%;
-  max-width: 400px;
   background: #002244;
+  width: 85%;
+  max-width: 400px;
   padding: 25px;
   border-radius: 15px;
   text-align: center;
   border: 1px solid #00aaff;
-  box-shadow: 0 0 25px rgba(0, 170, 255, 0.4);
+  box-shadow: 0 0 25px rgba(0,170,255,0.4);
 }
 
 .popup-box h2 {
-  font-size: 22px;
   color: #00bfff;
+  font-size: 22px;
   margin-bottom: 10px;
 }
 
@@ -64,7 +71,7 @@ h1 {
   color: #bcd;
   font-size: 15px;
   margin-bottom: 20px;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .btn-join, .btn-joined {
@@ -102,27 +109,27 @@ h1 {
   position: relative;
   width: 100%;
   max-width: 900px;
-  margin-top: 10px;
+  height: calc(100vh - 120px);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  background: #000;
+  margin-top: 10px;
 }
 
 video {
   width: 100%;
-  height: auto;
-  max-height: 70vh;
-  background: #000;
-  border-radius: 10px;
+  height: 100%;
   object-fit: contain;
+  border-radius: 10px;
+  background: #000;
 }
 
 /* Quality Button */
 #qualityBtn {
   position: absolute;
-  top: 10px;
-  right: 15px;
+  top: 12px;
+  right: 12px;
   background: rgba(0,0,30,0.8);
   color: #fff;
   border: 1px solid #00aaff;
@@ -141,7 +148,7 @@ video {
 .quality-menu {
   position: absolute;
   top: 50px;
-  right: 15px;
+  right: 10px;
   background: #001a33;
   border: 1px solid #00aaff;
   border-radius: 8px;
@@ -153,6 +160,7 @@ video {
 .quality-item {
   padding: 6px 12px;
   cursor: pointer;
+  color: #fff;
 }
 .quality-item:hover {
   background: #002a5c;
@@ -208,14 +216,9 @@ video {
   color: #fff;
 }
 
-/* Responsive Center Alignment */
 @media (max-width: 600px) {
-  video {
-    height: 50vh;
-  }
-  h1 {
-    font-size: 22px;
-  }
+  h1 { font-size: 22px; }
+  video { height: 60vh; }
 }
 </style>
 </head>
