@@ -3,225 +3,150 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Live TV</title>
+<title>Cricket Yoddha Live</title>
 <style>
-body { 
-  background: black; 
-  margin: 0; 
-  font-family: Arial, sans-serif; 
-  color: white; 
-}
-
-/* Popup */
-#popup {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-}
-
-.popup-box {
-  width: 85%;
-  max-width: 400px;
-  background: #111;
-  padding: 25px 20px;
+body {
+  background: #000;
+  color: white;
+  font-family: Arial, sans-serif;
+  margin: 0;
   text-align: center;
-  border-radius: 20px;
-  color: #fff;
-  box-shadow: 0 0 25px rgba(255, 0, 0, 0.7);
-  border: 1px solid #ff0000;
 }
 
-/* Heading */
-.popup-box h2 {
-  color: #ffffff; /* White for Support Us */
-  font-size: 24px;
-  margin-bottom: 15px;
+/* Header */
+h1 {
+  font-size: 28px;
+  background: #000;
+  color: #ffeb3b;
+  margin: 0;
+  padding: 12px 0;
+  letter-spacing: 1px;
+}
+
+/* Video Player */
+#video-box {
+  background: #000;
+  position: relative;
+}
+video {
+  width: 100%;
+  height: auto;
+  background: #000;
+}
+
+/* Buttons Box */
+.buttons-box {
+  background: #111;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  margin: 20px auto;
+  box-shadow: 0 0 15px rgba(255,255,255,0.1);
+}
+
+/* Button Titles */
+.section-title {
+  font-size: 16px;
+  color: #ccc;
+  margin-bottom: 8px;
+}
+
+/* Blue Buttons */
+.btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-}
-
-/* Paragraph */
-.popup-box p {
-  color: #bfbfbf;
-  font-size: 16px;
-  margin-bottom: 20px;
-  line-height: 1.4;
-}
-
-/* Buttons */
-.btn-join {
   width: 100%;
-  background: #ff0000;
+  background: linear-gradient(90deg, #00b4db, #0083b0);
   border: none;
   padding: 12px;
-  border-radius: 10px;
-  font-size: 18px;
-  color: #fff;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   transition: 0.3s;
+  text-decoration: none;
+}
+.btn:hover {
+  opacity: 0.9;
 }
 
-.btn-join:hover {
-  background: #e60000;
+/* Icons */
+.btn svg {
+  width: 18px;
+  height: 18px;
 }
 
-.btn-joined {
-  width: 100%;
-  background: #222;
-  border: 1px solid #444;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 18px;
+/* Back Link */
+.back-link {
+  display: inline-block;
+  margin: 10px 0 25px;
+  color: #bbb;
+  text-decoration: none;
+  font-size: 15px;
+}
+.back-link:hover {
   color: #fff;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.btn-joined:hover {
-  background: #333;
-}
-
-/* Video box */
-#video-box { 
-  display: none; 
-  position: relative; 
-  height: 100vh; 
-  background: black; 
-}
-
-video { 
-  width: 100%; 
-  height: 100%; 
-  background: black; 
-}
-
-/* Quality Button */
-#qualityBtn {
-  position: absolute; 
-  top: 10px; 
-  right: 10px; 
-  z-index: 999;
-  background: #000; 
-  color: #fff; 
-  padding: 8px 12px; 
-  border-radius: 7px; 
-  cursor: pointer;
-  border: 1px solid #ff0000;
-  box-shadow: 0 0 10px rgba(255,0,0,0.5);
-}
-
-/* Quality Menu */
-.quality-menu {
-  position: absolute; 
-  top: 50px; 
-  right: 10px; 
-  background: #000; 
-  color: #fff; 
-  padding: 10px; 
-  border-radius: 8px; 
-  display: none; 
-  z-index: 1000;
-  border: 1px solid #ff0000;
-  box-shadow: 0 0 15px rgba(255,0,0,0.5);
-}
-
-.quality-item { 
-  padding: 6px 12px; 
-  cursor: pointer; 
-}
-
-.quality-item:hover { 
-  background: #222; 
 }
 </style>
 </head>
-
 <body>
 
-<!-- Popup -->
-<div id="popup">
-  <div class="popup-box">
-    <h2>📣 Support Us!</h2>
-    <p>
-      Join our Telegram channel <b>Cricket Yodha</b> for instant updates, highlights, and exclusive links.
-    </p>
-    <button class="btn-join" onclick="joinNow()">Join Now</button>
-    <button class="btn-joined" onclick="already()">Already Joined</button>
-  </div>
-</div>
+<h1>CRICKET YODDHA</h1>
 
-<!-- Video Section -->
+<!-- Video Player -->
 <div id="video-box">
-  <button id="qualityBtn" onclick="toggleQuality()">⚙ Quality</button>
-  <div id="qualityMenu" class="quality-menu"></div>
   <video id="video" playsinline controls></video>
 </div>
 
+<!-- Buttons Section -->
+<div class="buttons-box">
+  <div class="section-title">🔔 Follow us for Updates!</div>
+  <a href="https://t.me/+rwZKMV0-L8wyOTll" target="_blank" class="btn">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M9.03 12.47 9 15.74a.75.75 0 0 0 1.2.6l2.5-1.9 2.75 2.01a1.5 1.5 0 0 0 2.35-.8l2.94-10.62a1.25 1.25 0 0 0-1.64-1.53L3.44 9.16a1 1 0 0 0 .06 1.89l5.53 1.42Zm8.06-5.11-7.28 3.06 2.89.76a.75.75 0 0 1 .53.53l.77 2.88 3.09-7.23Z"/></svg>
+    Click Here To Join Telegram
+  </a>
+</div>
+
+<div class="buttons-box">
+  <div class="section-title">🔗 Copy Link & Share</div>
+  <button class="btn" onclick="sharePage()">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M13.5 5.5v3h-2v-3h-2l3-3 3 3h-2Zm-8 7h13a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Zm1 7h11v-5H6.5v5Z"/></svg>
+    Click Here To Share This Page Link
+  </button>
+</div>
+
+<a href="index.html" class="back-link">← Back to All Streams</a>
+
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
+const stream = "https://smart.bengaldigital.live/AstroCricket/index.m3u8";
+const video = document.getElementById("video");
 
-// ✅ Your Stream Link (multi-quality)
-const stream = "https://cdn-media-content.onestream.studio/content/hls/live/event_21705751_6yn1hgx52/hls.m3u8";
-
-function showQualityMenu(levels, hls) {
-  const menu = document.getElementById("qualityMenu");
-  menu.innerHTML = "";
-
-  levels.forEach((level, i) => {
-    const opt = document.createElement("div");
-    opt.className = "quality-item";
-    opt.innerText = level.height + "p";
-    opt.onclick = () => { 
-      hls.currentLevel = i; 
-      menu.style.display = "none"; 
-    };
-    menu.appendChild(opt);
-  });
-
-  // Auto Mode
-  const auto = document.createElement("div");
-  auto.className = "quality-item";
-  auto.innerText = "Auto";
-  auto.onclick = () => { hls.currentLevel = -1; menu.style.display = "none"; };
-  menu.appendChild(auto);
+if (Hls.isSupported()) {
+  const hls = new Hls();
+  hls.loadSource(stream);
+  hls.attachMedia(video);
+} else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+  video.src = stream;
 }
 
-function toggleQuality(){
-  let menu = document.getElementById("qualityMenu");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
-
-function initPlayer(){
-  const v = document.getElementById("video");
-  if(Hls.isSupported()){
-    const hls = new Hls();
-    hls.loadSource(stream);
-    hls.attachMedia(v);
-    hls.on(Hls.Events.MANIFEST_PARSED, function(_, data){
-      showQualityMenu(data.levels, hls);
+function sharePage() {
+  const url = window.location.href;
+  if (navigator.share) {
+    navigator.share({
+      title: "Watch Live - Cricket Yoddha",
+      text: "Watch live cricket on Cricket Yoddha!",
+      url: url
     });
-  } else { 
-    v.src = stream; 
+  } else {
+    navigator.clipboard.writeText(url);
+    alert("Page link copied! Share it with your friends.");
   }
-}
-
-function joinNow(){
-  window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
-}
-
-function already(){
-  document.getElementById("popup").style.display="none";
-  document.getElementById("video-box").style.display="block";
-  initPlayer();
 }
 </script>
 
