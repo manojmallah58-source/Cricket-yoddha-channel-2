@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,7 +56,7 @@ video {
   background: #000; 
   color: #00ffb3; 
   padding: 8px 12px; 
-  border-radius: 7px; 
+  border-radius: 8px; 
   cursor: pointer;
   border: 1px solid #00ffb3;
   box-shadow: 0 0 10px rgba(0,255,179,0.5);
@@ -132,7 +131,6 @@ video {
   align-items: center;
   z-index: 999;
 }
-
 .popup-box {
   width: 85%;
   max-width: 380px;
@@ -183,18 +181,6 @@ video {
   background: #222;
   transform: scale(1.05);
 }
-
-/* Floating Icon (📢 without circle background) */
-.floating-icon {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  color: #00ffb3;
-  font-size: 36px;
-  cursor: pointer;
-  text-shadow: 0 0 10px rgba(0,255,179,0.6);
-  z-index: 10;
-}
 </style>
 </head>
 
@@ -237,9 +223,6 @@ video {
     <h3>🔗 Share This Page</h3>
     <button class="btn" onclick="sharePage()">Copy & Share This Page</button>
   </div>
-
-  <!-- Floating Icon -->
-  <div class="floating-icon" onclick="joinNow()">📢</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
