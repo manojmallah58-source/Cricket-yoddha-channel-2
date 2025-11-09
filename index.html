@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,6 +47,41 @@ video {
   background: black;
 }
 
+/* Quality Button */
+#qualityBtn {
+  position: absolute; 
+  top: 10px; 
+  right: 10px; 
+  z-index: 999;
+  background: #000; 
+  color: #00ffb3; 
+  padding: 8px 12px; 
+  border-radius: 7px; 
+  cursor: pointer;
+  border: 1px solid #00ffb3;
+  box-shadow: 0 0 10px rgba(0,255,179,0.5);
+}
+.quality-menu {
+  position: absolute; 
+  top: 50px; 
+  right: 10px; 
+  background: #061a12; 
+  color: #fff; 
+  padding: 10px; 
+  border-radius: 8px; 
+  display: none; 
+  z-index: 1000;
+  border: 1px solid #00ffb3;
+  box-shadow: 0 0 15px rgba(0,255,179,0.5);
+}
+.quality-item { 
+  padding: 6px 12px; 
+  cursor: pointer; 
+}
+.quality-item:hover { 
+  background: #00ffb31a; 
+}
+
 /* Sections */
 .section {
   margin: 20px auto;
@@ -56,7 +92,6 @@ video {
   padding: 20px;
   box-shadow: 0 0 25px rgba(0,255,179,0.2);
 }
-
 .section h3 {
   font-size: 18px;
   color: #00ffb3;
@@ -158,7 +193,7 @@ video {
     <h2>📣 Join Cricket Yodha</h2>
     <p>Get instant match updates, highlights, and live links on our Telegram channel.</p>
     <button class="popup-btn" onclick="joinNow()">Join Telegram</button><br><br>
-    <button class="popup-btn" style="background:#333;border:1px solid #00ffb3;" onclick="already()">Continue to Watch</button>
+    <button class="popup-btn" style="background:#333;border:1px solid #00ffb3;" onclick="already()">Already Joined</button>
   </div>
 </div>
 
@@ -173,6 +208,8 @@ video {
 
   <!-- Video -->
   <div class="video-container">
+    <button id="qualityBtn" onclick="toggleQuality()">⚙ Quality</button>
+    <div id="qualityMenu" class="quality-menu"></div>
     <video id="video" playsinline controls></video>
   </div>
 
@@ -185,7 +222,7 @@ video {
   <!-- Share Section -->
   <div class="section">
     <h3>🔗 Share This Page</h3>
-    <button class="btn" onclick="copyLink()">Copy & Share This Page</button>
+    <button class="btn" onclick="sharePage()">Copy & Share This Page</button>
   </div>
 
   <!-- Floating Icon -->
@@ -197,16 +234,50 @@ video {
 // 🔗 Stream URL
 const stream = "https://smart.bengaldigital.live/AstroCricket/index.m3u8";
 
-// 🎥 Initialize video
+// 🎥 Initialize Player with Quality Options
 function initPlayer(){
   const v = document.getElementById("video");
   if(Hls.isSupported()){
     const hls = new Hls();
     hls.loadSource(stream);
     hls.attachMedia(v);
+    hls.on(Hls.Events.MANIFEST_PARSED, function(_, data){
+      showQualityMenu(data.levels, hls);
+    });
   } else {
     v.src = stream;
   }
+}
+
+// 🎛️ Quality Menu
+function showQualityMenu(levels, hls){
+  const menu = document.getElementById("qualityMenu");
+  menu.innerHTML = "";
+
+  levels.forEach((level, i) => {
+    const opt = document.createElement("div");
+    opt.className = "quality-item";
+    opt.innerText = level.height + "p";
+    opt.onclick = () => {
+      hls.currentLevel = i;
+      menu.style.display = "none";
+    };
+    menu.appendChild(opt);
+  });
+
+  const auto = document.createElement("div");
+  auto.className = "quality-item";
+  auto.innerText = "Auto";
+  auto.onclick = () => {
+    hls.currentLevel = -1;
+    menu.style.display = "none";
+  };
+  menu.appendChild(auto);
+}
+
+function toggleQuality(){
+  let menu = document.getElementById("qualityMenu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
 
 // 🔘 Telegram
@@ -221,10 +292,22 @@ function already(){
   initPlayer();
 }
 
-// 🔗 Copy Link
-function copyLink(){
-  navigator.clipboard.writeText(window.location.href);
-  alert("✅ Page link copied! Share it with your friends.");
+// 🔗 Share Function
+function sharePage(){
+  const shareData = {
+    title: "CRICKCAST Live",
+    text: "Watch Live Cricket on CRICKCAST!",
+    url: window.location.href
+  };
+
+  if (navigator.share) {
+    navigator.share(shareData)
+      .then(() => console.log("Shared successfully"))
+      .catch((error) => console.log("Share failed:", error));
+  } else {
+    navigator.clipboard.writeText(window.location.href);
+    alert("✅ Link copied! Share it manually.");
+  }
 }
 </script>
 
