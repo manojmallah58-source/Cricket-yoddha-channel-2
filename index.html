@@ -48,6 +48,41 @@ video {
   border: none;
 }
 
+/* Quality Button */
+#qualityBtn {
+  position: absolute; 
+  top: 10px; 
+  right: 10px; 
+  z-index: 999;
+  background: #000; 
+  color: #00ffb3; 
+  padding: 8px 12px; 
+  border-radius: 7px; 
+  cursor: pointer;
+  border: 1px solid #00ffb3;
+  box-shadow: 0 0 10px rgba(0,255,179,0.5);
+}
+.quality-menu {
+  position: absolute; 
+  top: 50px; 
+  right: 10px; 
+  background: #061a12; 
+  color: #fff; 
+  padding: 10px; 
+  border-radius: 8px; 
+  display: none; 
+  z-index: 1000;
+  border: 1px solid #00ffb3;
+  box-shadow: 0 0 15px rgba(0,255,179,0.5);
+}
+.quality-item { 
+  padding: 6px 12px; 
+  cursor: pointer; 
+}
+.quality-item:hover { 
+  background: #00ffb31a; 
+}
+
 /* Sections */
 .section {
   margin: 20px auto;
@@ -149,18 +184,15 @@ video {
   transform: scale(1.05);
 }
 
-/* Floating Icon */
+/* Floating Icon (📢 without circle background) */
 .floating-icon {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: #00ffb3;
-  color: #000;
-  font-size: 26px;
-  padding: 14px;
-  border-radius: 50%;
+  color: #00ffb3;
+  font-size: 36px;
   cursor: pointer;
-  box-shadow: 0 0 20px rgba(0,255,179,0.6);
+  text-shadow: 0 0 10px rgba(0,255,179,0.6);
   z-index: 10;
 }
 </style>
@@ -189,6 +221,8 @@ video {
 
   <!-- Video -->
   <div class="video-container">
+    <button id="qualityBtn" onclick="toggleQuality()">⚙ Quality</button>
+    <div id="qualityMenu" class="quality-menu"></div>
     <video id="video" playsinline controls></video>
   </div>
 
@@ -213,19 +247,53 @@ video {
 // 🔗 Stream URL
 const stream = "https://smart.bengaldigital.live/AstroCricket/index.m3u8";
 
-// 🎥 Initialize Player (no quality control now)
+// 🎥 Initialize Player with Quality Options
 function initPlayer(){
   const v = document.getElementById("video");
   if(Hls.isSupported()){
     const hls = new Hls();
     hls.loadSource(stream);
     hls.attachMedia(v);
+    hls.on(Hls.Events.MANIFEST_PARSED, function(_, data){
+      showQualityMenu(data.levels, hls);
+    });
   } else {
     v.src = stream;
   }
 }
 
-// 🔘 Telegram Join
+// 🎛️ Quality Menu
+function showQualityMenu(levels, hls){
+  const menu = document.getElementById("qualityMenu");
+  menu.innerHTML = "";
+
+  levels.forEach((level, i) => {
+    const opt = document.createElement("div");
+    opt.className = "quality-item";
+    opt.innerText = level.height + "p";
+    opt.onclick = () => {
+      hls.currentLevel = i;
+      menu.style.display = "none";
+    };
+    menu.appendChild(opt);
+  });
+
+  const auto = document.createElement("div");
+  auto.className = "quality-item";
+  auto.innerText = "Auto";
+  auto.onclick = () => {
+    hls.currentLevel = -1;
+    menu.style.display = "none";
+  };
+  menu.appendChild(auto);
+}
+
+function toggleQuality(){
+  let menu = document.getElementById("qualityMenu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+// 🔘 Telegram
 function joinNow(){
   window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
 }
