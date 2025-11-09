@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,41 +45,7 @@ video {
   width: 100%;
   height: 100%;
   background: black;
-}
-
-/* Quality Button */
-#qualityBtn {
-  position: absolute; 
-  top: 10px; 
-  right: 10px; 
-  z-index: 999;
-  background: #000; 
-  color: #00ffb3; 
-  padding: 8px 12px; 
-  border-radius: 7px; 
-  cursor: pointer;
-  border: 1px solid #00ffb3;
-  box-shadow: 0 0 10px rgba(0,255,179,0.5);
-}
-.quality-menu {
-  position: absolute; 
-  top: 50px; 
-  right: 10px; 
-  background: #061a12; 
-  color: #fff; 
-  padding: 10px; 
-  border-radius: 8px; 
-  display: none; 
-  z-index: 1000;
-  border: 1px solid #00ffb3;
-  box-shadow: 0 0 15px rgba(0,255,179,0.5);
-}
-.quality-item { 
-  padding: 6px 12px; 
-  cursor: pointer; 
-}
-.quality-item:hover { 
-  background: #00ffb31a; 
+  border: none;
 }
 
 /* Sections */
@@ -119,51 +86,66 @@ video {
   transform: scale(1.03);
 }
 
-/* Popup */
+/* Modern Popup */
 #popup {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0,0,0,0.9);
+  background: rgba(0, 0, 0, 0.9);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 20;
+  z-index: 999;
 }
+
 .popup-box {
   width: 85%;
   max-width: 380px;
-  background: #111;
-  border: 1px solid #00ffb3;
+  background: #0a0a0a;
   border-radius: 20px;
-  box-shadow: 0 0 25px rgba(0,255,179,0.6);
+  box-shadow: 0 0 25px rgba(0,255,179,0.4), 0 0 40px rgba(0,255,255,0.2);
   padding: 25px 20px;
   text-align: center;
+  border: 1px solid rgba(0,255,179,0.5);
 }
 .popup-box h2 {
-  color: #00ffb3;
-  font-size: 22px;
-  margin-bottom: 15px;
+  font-size: 24px;
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 .popup-box p {
   color: #ccc;
   font-size: 15px;
   margin-bottom: 20px;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 .popup-btn {
-  background: linear-gradient(90deg, #00ffb3, #0099ff);
+  display: block;
+  width: 100%;
   border: none;
-  padding: 12px 20px;
-  color: #fff;
   border-radius: 10px;
   font-size: 17px;
   font-weight: bold;
+  padding: 12px 0;
   cursor: pointer;
-  width: 100%;
+  margin-bottom: 12px;
   transition: 0.3s;
 }
-.popup-btn:hover {
+.popup-btn:first-child {
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  color: #fff;
+}
+.popup-btn:first-child:hover {
+  transform: scale(1.05);
+}
+.popup-btn:last-child {
+  background: #1a1a1a;
+  border: 1px solid #00ffb3;
+  color: #fff;
+}
+.popup-btn:last-child:hover {
+  background: #222;
   transform: scale(1.05);
 }
 
@@ -189,10 +171,10 @@ video {
 <!-- Popup -->
 <div id="popup">
   <div class="popup-box">
-    <h2>📣 Join Cricket Yodha</h2>
-    <p>Get instant match updates, highlights, and live links on our Telegram channel.</p>
-    <button class="popup-btn" onclick="joinNow()">Join Telegram</button><br><br>
-    <button class="popup-btn" style="background:#333;border:1px solid #00ffb3;" onclick="already()">Already Joined</button>
+    <h2>💬 Support Us!</h2>
+    <p>Join our Telegram channel <strong style="color:#00ffb3;">DILZ LINKS</strong> for instant updates, highlights, and exclusive links.</p>
+    <button class="popup-btn" onclick="joinNow()">Join Now</button>
+    <button class="popup-btn" onclick="already()">Already Joined</button>
   </div>
 </div>
 
@@ -207,8 +189,6 @@ video {
 
   <!-- Video -->
   <div class="video-container">
-    <button id="qualityBtn" onclick="toggleQuality()">⚙ Quality</button>
-    <div id="qualityMenu" class="quality-menu"></div>
     <video id="video" playsinline controls></video>
   </div>
 
@@ -233,53 +213,19 @@ video {
 // 🔗 Stream URL
 const stream = "https://smart.bengaldigital.live/AstroCricket/index.m3u8";
 
-// 🎥 Initialize Player with Quality Options
+// 🎥 Initialize Player (no quality control now)
 function initPlayer(){
   const v = document.getElementById("video");
   if(Hls.isSupported()){
     const hls = new Hls();
     hls.loadSource(stream);
     hls.attachMedia(v);
-    hls.on(Hls.Events.MANIFEST_PARSED, function(_, data){
-      showQualityMenu(data.levels, hls);
-    });
   } else {
     v.src = stream;
   }
 }
 
-// 🎛️ Quality Menu
-function showQualityMenu(levels, hls){
-  const menu = document.getElementById("qualityMenu");
-  menu.innerHTML = "";
-
-  levels.forEach((level, i) => {
-    const opt = document.createElement("div");
-    opt.className = "quality-item";
-    opt.innerText = level.height + "p";
-    opt.onclick = () => {
-      hls.currentLevel = i;
-      menu.style.display = "none";
-    };
-    menu.appendChild(opt);
-  });
-
-  const auto = document.createElement("div");
-  auto.className = "quality-item";
-  auto.innerText = "Auto";
-  auto.onclick = () => {
-    hls.currentLevel = -1;
-    menu.style.display = "none";
-  };
-  menu.appendChild(auto);
-}
-
-function toggleQuality(){
-  let menu = document.getElementById("qualityMenu");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
-
-// 🔘 Telegram
+// 🔘 Telegram Join
 function joinNow(){
   window.open("https://t.me/+rwZKMV0-L8wyOTll","_blank");
 }
