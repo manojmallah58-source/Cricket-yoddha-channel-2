@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Star Sports 1 HD - Screenshot Feature</title>
+  <title>Star Sports 1 HD Hindi</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">
   <style>
@@ -27,85 +27,38 @@
       background: #000;
       object-fit: contain;
     }
-
-    /* Screenshot Button Styling */
-    .screenshot-btn {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 14px;
-      cursor: pointer;
-      padding: 0 10px;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
-    .screenshot-btn:hover {
-      color: #7d00ff; /* Purple hint */
-    }
+    /* Spinner hide karne ke liye */
     .shaka-spinner-container { display: none !important; }
   </style>
 </head>
 <body>
-
   <div class="shaka-video-container" data-shaka-player>
-    <video autoplay playsinline id="video"></video>
+    <video autoplay playsinline preload="metadata"></video>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       shaka.polyfill.installAll();
 
-      const video = document.getElementById('video');
-      const container = document.querySelector('.shaka-video-container');
+      if (!shaka.Player.isBrowserSupported()) {
+        console.error('Browser not supported');
+        return;
+      }
+
+      const video = document.querySelector('video');
       const player = new shaka.Player();
       await player.attach(video);
 
-      // UI Overlay Setup
+      const container = document.querySelector('.shaka-video-container');
       const ui = new shaka.ui.Overlay(player, container, video);
-      
-      // Custom Screenshot Button Logic
-      const createScreenshotButton = () => {
-        const button = document.createElement('button');
-        button.innerHTML = '📸 SS'; 
-        button.classList.add('screenshot-btn');
-        
-        button.addEventListener('click', () => {
-          const canvas = document.createElement('canvas');
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          const ctx = canvas.getContext('2d');
-          
-          // Video ka frame canvas par draw karna
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          
-          // Image download link create karna
-          const link = document.createElement('a');
-          link.download = `Screenshot_${new Date().getTime()}.png`;
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-        });
-        
-        return button;
-      };
-
-      // Button ko controls mein register karna
-      const screenshotButtonFactory = {
-        create: (rootElement, controls) => {
-          return createScreenshotButton();
-        }
-      };
-      shaka.ui.Controls.registerElement('screenshot', screenshotButtonFactory);
 
       ui.configure({
         controlPanelElements: [
-          'play_pause', 'time_and_duration', 'spacer', 'screenshot', 'quality', 'fullscreen'
+          'play_pause', 'time_and_duration', 'spacer', 'volume', 'quality', 'fullscreen'
         ]
       });
 
-      // --- Stream Config ---
+      // --- Naye Details Yahan Replace Kiye Gaye Hain ---
       const streamUrl = "https://jiotvmblive.cdn.jio.com/bpk-tv/Star_Sports_HD1_Hindi_BTS/output/index.mpd";
       const drmConfig = {
         clearKeys: {
@@ -116,14 +69,19 @@
 
       player.configure({
         drm: drmConfig,
-        streaming: { lowLatencyMode: true }
+        streaming: {
+          lowLatencyMode: true,
+          useNativeHlsOnSafari: true
+        }
       });
 
+      // Request filters for Headers & Cookies
       player.getNetworkingEngine().registerRequestFilter((type, request) => {
         request.headers['Referer'] = 'https://www.jiotv.com/';
         request.headers['User-Agent'] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
         request.headers['Cookie'] = cookieHeader;
 
+        // URL ke peeche cookie add karna (Auth ke liye zaroori hai)
         if (type === shaka.net.NetworkingEngine.RequestType.MANIFEST || 
             type === shaka.net.NetworkingEngine.RequestType.SEGMENT) {
           const separator = request.uris[0].includes('?') ? '&' : '?';
@@ -133,8 +91,9 @@
 
       try {
         await player.load(streamUrl);
+        console.log('The video has now been loaded!');
       } catch (e) {
-        console.error('Error!', e);
+        console.error('Error loading stream', e);
       }
     });
   </script>
