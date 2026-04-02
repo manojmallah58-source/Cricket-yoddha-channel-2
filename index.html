@@ -1,1 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Plyr Player</title>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
+        #player-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .plyr {
+            width: 100%;
+            max-width: 177.78vh; /* 16:9 aspect ratio */
+            height: 100%;
+        }
+
+        #loadingScreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            z-index: 10;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loadingScreen"><h2>Loading...</h2></div>
+
+    <div id="player-container">
+        <video id="player" playsinline controls poster="https://blogger.googleusercontent.com/img/a/AVvXsEiGqaZeRBZ6Y7yV5ZYSRiNRhBa5q9_EMx7R5TJcHd3XJwwHh2YhNOGt76Y4vEcUIjvIaA7W-Tw1RyMLP-4WZwVHA4mk18zwXl7HdSL5WabprIasDOWJO7jpL0zTQB4p_y7X0Rv0xwe-cJ-GvxofAgeRp2FIiNgB90n_b8Cqw0sAaZqVhJg_fi9UyfSO8KY">
+            <source id="m3u8-url" src="" type="application/x-mpegURL">
+        </video>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+
+    <script>
+        const PROXY = "https://sony-liv-proxyb.wasmer.app/stream_proxy.php?url=";
+
+        function getParam(n) { return new URLSearchParams(location.search).get(n); }
+
+        let finalURL = getParam('url');
+        const channel = 'sgsafsfsfsfsfs';
+
+        async function fetchKickM3U8(channelName) {
+            const endpoint = "https://kick.com/api/v2/channels/" + encodeURIComponent(channelName);
+            try {
+                const res = await fetch(endpoint);
+                const data = await res.json();
+                if (!data.livestream) return null;
+                const realURL = data.playback_url;
+                return PROXY + encodeURIComponent(realURL);
+            } catch (e) { return null; }
+        }
+
+        // Logic for fetching stream
+        if (channel && !finalURL) {
+            fetchKickM3U8(channel).then(url => {
+                if (!url) {
+                    document.getElementById("loadingScreen").innerHTML = "<h2>Kick Fetch Failed</h2>";
+                } else {
+                    location.href = location.pathname + "?url=" + encodeURIComponent(url);
+                }
+            });
+        }
+
+        if (!finalURL) {
+            document.getElementById("loadingScreen").innerHTML = "<h2>No Stream URL Provided</h2>";
+        } else {
+            if (!finalURL.startsWith(PROXY)) {
+                finalURL = PROXY + encodeURIComponent(finalURL);
+            }
+            initPlayer(finalURL);
+        }
+
+        function initPlayer(sourceURL) {
+            const video = document.getElementById('player');
+
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(sourceURL);
+                hls.attachMedia(video);
+
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    const availableQualities = Array.from(new Set(hls.levels.map(l => l.height))).sort((a, b) => a - b);
+                    const qualityOptions = [...availableQualities, 'auto'];
+
+                    const player = new Plyr(video, {
+                        autoplay: true,
+                        muted: true,
+                        controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'fullscreen'],
+                        settings: ['quality'],
+                        quality: {
+                            default: 'auto',
+                            options: qualityOptions,
+                            forced: true,
+                            onChange: q => {
+                                if (q === 'auto') hls.currentLevel = -1;
+                                else hls.currentLevel = hls.levels.findIndex(l => l.height === parseInt(q));
+                            }
+                        }
+                    });
+
+                    // UI cleanup
+                    document.getElementById("loadingScreen").style.display = "none";
+                    video.muted = false;
+                    video.play();
+                });
+
+                hls.on(Hls.Events.ERROR, () => {
+                    document.getElementById("loadingScreen").innerHTML = "<h2>Error Loading Stream</h2>";
+                });
+
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = sourceURL;
+                new Plyr(video, { autoplay: true, muted: false });
+                document.getElementById("loadingScreen").style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
