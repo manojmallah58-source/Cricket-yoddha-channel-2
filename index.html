@@ -1,145 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Plyr Player</title>
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Star Sports 1 Hindi</title>
+    <meta name="referrer" content="no-referrer">
+    <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css"/>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FMP9REY96D"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-FMP9REY96D');
+    </script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #000;
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #player-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .plyr {
-            width: 100%;
-            max-width: 177.78vh; /* 16:9 aspect ratio */
-            height: 100%;
-        }
-
-        #loadingScreen {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 18px;
-            z-index: 10;
-            text-align: center;
-        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+        .shaka-video-container{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;}
+        video{width:100%;height:100%;object-fit:contain;background:#000;}
+        .block-overlay{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);text-align:center;}
+        .block-box{padding:40px;max-width:500px;width:90%;background:rgba(20, 20, 20, 0.95);border-radius:16px;border:1px solid rgba(255, 255, 255, 0.1);box-shadow:0 20px 50px rgba(0,0,0,0.5);animation: fadeInUp 0.6s ease-out;}
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .block-title{font-size:42px;font-weight:800;color:#ffffff;text-transform:uppercase;letter-spacing:2px;margin-bottom:20px;}
+        .block-sub{font-size:14px;font-weight:500;color:rgba(255, 255, 255, 0.6);line-height:1.6;}
     </style>
 </head>
 <body>
 
-    <div id="loadingScreen"><h2>Loading...</h2></div>
+<div class="shaka-video-container" id="player-container">
+    <video id="video" autoplay muted playsinline preload="metadata"></video>
+</div>
 
-    <div id="player-container">
-        <video id="player" playsinline controls poster="https://blogger.googleusercontent.com/img/a/AVvXsEiGqaZeRBZ6Y7yV5ZYSRiNRhBa5q9_EMx7R5TJcHd3XJwwHh2YhNOGt76Y4vEcUIjvIaA7W-Tw1RyMLP-4WZwVHA4mk18zwXl7HdSL5WabprIasDOWJO7jpL0zTQB4p_y7X0Rv0xwe-cJ-GvxofAgeRp2FIiNgB90n_b8Cqw0sAaZqVhJg_fi9UyfSO8KY">
-            <source id="m3u8-url" src="" type="application/x-mpegURL">
-        </video>
-    </div>
+<script>
+// --- AD CONTROL LOGIC (Har 5 Minute Mein) ---
+(function() {
+    const AD_GAP = 5 * 60 * 1000; 
+    const AD_KEY = 'last_ad_trigger_time';
+    const currentTime = new Date().getTime();
+    const lastShown = localStorage.getItem(AD_KEY);
 
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    if (!lastShown || (currentTime - lastShown > AD_GAP)) {
+        var script = document.createElement('script');
+        script.src = "https://pl28294740.profitablecpmratenetwork.com/4d/45/99/4d459939f33b21f08186d13fcab97399.js";
+        script.async = true;
+        document.body.appendChild(script);
+        localStorage.setItem(AD_KEY, currentTime);
+    }
+})();
 
-    <script>
-        const PROXY = "https://sony-liv-proxyb.wasmer.app/stream_proxy.php?url=";
+// --- PLAYER LOGIC ---
+(function(){
+    function isSandboxedEnv(){
+        try { return window.self !== window.top; } catch(e) { return true; }
+    }
+    if(isSandboxedEnv()){ return; }
 
-        function getParam(n) { return new URLSearchParams(location.search).get(n); }
+    const CONFIG={
+        // Naya URL aur Keys yahan update kar diye gaye hain
+        streamUrl:"https://jiotvioslive.cdn.jio.com//bpk-tv/Star_Sports_HD2_BTS/output/index.mpd",
+        keyId:"9457eb90129456fa8ea95e10ba4ac51e",
+        key:"e620a970cea474c491ac78ae71a4d764"
+    };
 
-        let finalURL = getParam('url');
-        const channel = 'sgsafsfsfsfsfs';
+    document.addEventListener("DOMContentLoaded",async()=>{
+        shaka.polyfill.installAll();
+        const video=document.getElementById("video");
+        const container=document.getElementById("player-container");
+        const player=new shaka.Player();
+        await player.attach(video);
+        const ui=new shaka.ui.Overlay(player,container,video);
+        
+        ui.configure({
+            controlPanelElements: ["mute", "play_pause", "time_and_duration", "spacer", "quality", "fullscreen"]
+        });
 
-        async function fetchKickM3U8(channelName) {
-            const endpoint = "https://kick.com/api/v2/channels/" + encodeURIComponent(channelName);
-            try {
-                const res = await fetch(endpoint);
-                const data = await res.json();
-                if (!data.livestream) return null;
-                const realURL = data.playback_url;
-                return PROXY + encodeURIComponent(realURL);
-            } catch (e) { return null; }
-        }
+        player.configure({
+            drm:{clearKeys:{[CONFIG.keyId]:CONFIG.key}},
+            streaming:{ lowLatencyMode:true }
+        });
 
-        // Logic for fetching stream
-        if (channel && !finalURL) {
-            fetchKickM3U8(channel).then(url => {
-                if (!url) {
-                    document.getElementById("loadingScreen").innerHTML = "<h2>Kick Fetch Failed</h2>";
-                } else {
-                    location.href = location.pathname + "?url=" + encodeURIComponent(url);
-                }
-            });
-        }
+        // Naya Cookie/Token yahan set hai
+        let cookieValue="st=1775370547~exp=1775456947~acl=/*~hmac=c94c324abf3cae8f90d791778e154cd35fb1bd0af38825648a1b031c7ae6de2d";
 
-        if (!finalURL) {
-            document.getElementById("loadingScreen").innerHTML = "<h2>No Stream URL Provided</h2>";
-        } else {
-            if (!finalURL.startsWith(PROXY)) {
-                finalURL = PROXY + encodeURIComponent(finalURL);
+        player.getNetworkingEngine().registerRequestFilter((type,request)=>{
+            if((type===shaka.net.NetworkingEngine.RequestType.MANIFEST||type===shaka.net.NetworkingEngine.RequestType.SEGMENT)&&!request.uris[0].includes("__hdnea__")){
+                const sep=request.uris[0].includes("?")?"&":"?";
+                request.uris[0]+=sep+"__hdnea__="+cookieValue;
             }
-            initPlayer(finalURL);
-        }
+        });
 
-        function initPlayer(sourceURL) {
-            const video = document.getElementById('player');
-
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(sourceURL);
-                hls.attachMedia(video);
-
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    const availableQualities = Array.from(new Set(hls.levels.map(l => l.height))).sort((a, b) => a - b);
-                    const qualityOptions = [...availableQualities, 'auto'];
-
-                    const player = new Plyr(video, {
-                        autoplay: true,
-                        muted: true,
-                        controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'fullscreen'],
-                        settings: ['quality'],
-                        quality: {
-                            default: 'auto',
-                            options: qualityOptions,
-                            forced: true,
-                            onChange: q => {
-                                if (q === 'auto') hls.currentLevel = -1;
-                                else hls.currentLevel = hls.levels.findIndex(l => l.height === parseInt(q));
-                            }
-                        }
-                    });
-
-                    // UI cleanup
-                    document.getElementById("loadingScreen").style.display = "none";
-                    video.muted = false;
-                    video.play();
-                });
-
-                hls.on(Hls.Events.ERROR, () => {
-                    document.getElementById("loadingScreen").innerHTML = "<h2>Error Loading Stream</h2>";
-                });
-
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = sourceURL;
-                new Plyr(video, { autoplay: true, muted: false });
-                document.getElementById("loadingScreen").style.display = "none";
-            }
-        }
-    </script>
+        try{
+            await player.load(CONFIG.streamUrl);
+            video.play().catch(()=>{});
+        }catch(e){}
+        video.addEventListener("play",()=>{ video.muted=false; });
+    });
+})();
+</script>
 </body>
 </html>
