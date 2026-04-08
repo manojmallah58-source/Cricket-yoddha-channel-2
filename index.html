@@ -48,6 +48,7 @@ font-weight:600;
 color:rgba(255,255,255,0.12); 
 } 
 
+/* Blocker Styles */ 
 .block-overlay{ 
 position:fixed; 
 inset:0; 
@@ -107,7 +108,7 @@ line-height:1.6;
 
 <script> 
 (function(){ 
-// --- ADS LOGIC (Start + Every 5 Mins) ---
+// --- 1. ADS LOGIC (Start + Every 5 Mins) ---
 const adScriptUrl = "https://pl28294740.profitablecpmratenetwork.com/4d/45/99/4d459939f33b21f08186d13fcab97399.js";
 
 function loadAdScript() {
@@ -123,7 +124,7 @@ function loadAdScript() {
 loadAdScript();
 setInterval(loadAdScript, 300000);
 
-// --- PLAYER LOGIC ---
+// --- 2. PLAYER LOGIC ---
 function isSandboxedEnv(){ 
 try { 
 if (window.self === window.top) return false; 
@@ -153,12 +154,12 @@ triggerBlockScreen('Disable Sandbox', 'Opening Chrome Browser Only & Disable Ad 
 return; 
 } 
 
-// UPDATED WITH YOUR NEW DATA
+// UPDATED CONFIG WITH YOUR NEW LINK DATA
 const CONFIG={ 
-streamUrl:"https://jiotvpllive.cdn.jio.com//bpk-tv/Star_Sports_HD1_BTS/output/index.mpd", 
+streamUrl:"https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD1_BTS/output/index.mpd", 
 keyId:"965dc2ddb1d85138ad787999a7f30ca5", 
 key:"859695076e67fe961836b564db6d689c", 
-manualCookie:"__hdnea__=st=1775559734~exp=1775581334~acl=/*~hmac=60f9c2d0af2297a4cfeed4abe2df3ce3bd5e63a3cd39909c5291b965ddc9f41c"
+manualCookie:"__hdnea__=st=1775615122~exp=1775636722~acl=/*~hmac=a0cd55e96c2d1dcc53479a5619e9f1d50979f85249437a172c78cf83909a50d3"
 }; 
 
 document.addEventListener("DOMContentLoaded",async()=>{ 
