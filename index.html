@@ -3,7 +3,7 @@
 <head> 
 <meta charset="utf-8"> 
 <meta name="viewport" content="width=device-width,initial-scale=1"> 
-<title>Live Sports</title> 
+<title>Hub Sports 4 HD</title> 
 <meta name="referrer" content="no-referrer"> 
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script> 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css"/> 
@@ -48,6 +48,7 @@ font-weight:600;
 color:rgba(255,255,255,0.12); 
 } 
 
+/* Blocker Styles */ 
 .block-overlay{ 
 position:fixed; 
 inset:0; 
@@ -153,11 +154,11 @@ triggerBlockScreen('Disable Sandbox', 'Opening Chrome Browser Only & Disable Ad 
 return; 
 } 
 
-// UPDATED NEW STREAM CONFIG
+// UPDATED CONFIG WITH STARHUB DATA
 const CONFIG={ 
-streamUrl:"https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/h0j1lnfwdz/out/v1/4843137de5e74380962b3e8d8d78e061/cenc.mpd", 
-keyId:"06c474083954369b65c9b6764eeeb3a3", 
-key:"c041952cd342b4ea84bd5865423b8585"
+streamUrl:"https://sh-bks400-08.starhubgo.com/bpk-token/1aa@joovm5f2zvs3h3zyttaif2kz4lttlf1pjev3djca/bpk-tv/HubSports4HDnew/output/manifest.mpd", 
+keyId:"9a29d4f3b6e540b3aa2f36927c01b6f4", 
+key:"57b670b45b5cb453a9f48fa975b702c1"
 }; 
 
 document.addEventListener("DOMContentLoaded",async()=>{ 
@@ -180,13 +181,13 @@ controlPanelElements: ["mute", "play_pause", "time_and_duration", "spacer", "qua
 player.configure({ 
 drm:{clearKeys:{[CONFIG.keyId]:CONFIG.key}}, 
 manifest:{defaultPresentationDelay:5}, 
-streaming:{ lowLatencyMode:true, bufferingGoal:10, rebufferingGoal:2, safeSeekOffset:5 } 
+streaming:{ lowLatencyMode:true, bufferingGoal:15, rebufferingGoal:3, safeSeekOffset:5 } 
 }); 
 
 try{ 
 await player.load(CONFIG.streamUrl); 
 video.play().catch(()=>{}); 
-}catch(e){} 
+}catch(e){ console.error("Error loading stream", e); } 
 
 video.addEventListener("play",()=>{ video.muted=false; }); 
 }); 
