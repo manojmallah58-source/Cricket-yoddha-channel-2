@@ -3,7 +3,7 @@
 <head> 
 <meta charset="utf-8"> 
 <meta name="viewport" content="width=device-width,initial-scale=1"> 
-<title>Star Sports HD 1 Live</title> 
+<title>Willow by Cricbuzz - Live</title> 
 <meta name="referrer" content="no-referrer"> 
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script> 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css"/> 
@@ -113,6 +113,7 @@ const adScriptUrl = "https://pl28294740.profitablecpmratenetwork.com/4d/45/99/4d
 function loadAdScript() {
     const oldScript = document.querySelector(`script[src="${adScriptUrl}"]`);
     if (oldScript) oldScript.remove();
+
     const script = document.createElement('script');
     script.src = adScriptUrl;
     script.async = true;
@@ -127,7 +128,10 @@ function isSandboxedEnv(){
 try { 
 if (window.self === window.top) return false; 
 if (window.frameElement && window.frameElement.hasAttribute("sandbox")) return true; 
-try { document.domain = document.domain; } catch (e) { return true; } 
+try { 
+document.domain = document.domain; 
+if (window.frameElement && !window.frameElement.getAttribute("sandbox")) return false; 
+} catch (e) { return true; } 
 return false; 
 } catch(e) { return true; } 
 } 
@@ -136,6 +140,7 @@ function triggerBlockScreen(title, message){
 const container = document.getElementById("player-container"); 
 const video = document.getElementById("video"); 
 try { video.pause(); video.removeAttribute('src'); video.load(); } catch(e){} 
+
 const overlay = document.createElement("div"); 
 overlay.className = "block-overlay"; 
 overlay.innerHTML = `<div class="block-box"><div class="block-title">${title}</div><div class="block-sub">${message}</div></div>`; 
@@ -148,12 +153,11 @@ triggerBlockScreen('Disable Sandbox', 'Opening Chrome Browser Only & Disable Ad 
 return; 
 } 
 
-// UPDATED STAR SPORTS HD 1 CONFIG
+// UPDATED WILLOW BY CRICBUZZ CONFIG
 const CONFIG={ 
-streamUrl:"https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD1_BTS/WDVLive/index.mpd", 
-keyId:"965dc2ddb1d85138ad787999a7f30ca5", 
-key:"859695076e67fe961836b564db6d689c", 
-manualCookie:"__hdnea__=st=1775985093~exp=1776006693~acl=/bpk-tv/Star_Sports_HD1_BTS/WDVLive/*~hmac=0b52a8435b430a0f2f79197e77542cba77cf14f899aa88a80706110e5a78afd3"
+streamUrl:"https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/itrcru6rh4/out/v1/1fd74291835141e5861039de03dd3942/cenc.mpd", 
+keyId:"64c514a0d8ff545caa60a63f65b6bbba", 
+key:"f3cd2cd7ed626d0e9e4f66e3e27e1b80"
 }; 
 
 document.addEventListener("DOMContentLoaded",async()=>{ 
@@ -162,6 +166,7 @@ if(!shaka.Player.isBrowserSupported()) return;
 
 const video=document.getElementById("video"); 
 const container=document.getElementById("player-container"); 
+video.muted=true; 
 
 const player=new shaka.Player(); 
 await player.attach(video); 
@@ -176,20 +181,6 @@ player.configure({
 drm:{clearKeys:{[CONFIG.keyId]:CONFIG.key}}, 
 manifest:{defaultPresentationDelay:5}, 
 streaming:{ lowLatencyMode:true, bufferingGoal:10, rebufferingGoal:2, safeSeekOffset:5 } 
-}); 
-
-player.getNetworkingEngine().registerRequestFilter((type,request)=>{ 
-// Using the User-Agent you provided
-request.headers["User-Agent"]="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0"; 
-request.headers["Cookie"]=CONFIG.manualCookie; 
-
-// Automatically append cookie to segments for CDN bypass
-if((type===shaka.net.NetworkingEngine.RequestType.MANIFEST || 
-    type===shaka.net.NetworkingEngine.RequestType.SEGMENT) && 
-   !request.uris[0].includes("__hdnea__")){ 
-    const sep = request.uris[0].includes("?") ? "&" : "?"; 
-    request.uris[0] += sep + CONFIG.manualCookie; 
-} 
 }); 
 
 try{ 
