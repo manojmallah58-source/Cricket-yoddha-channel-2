@@ -153,11 +153,11 @@ triggerBlockScreen('Disable Sandbox', 'Opening Chrome Browser Only & Disable Ad 
 return; 
 } 
 
-// UPDATED CONFIG WITH YOUR NEW STREAM DATA
+// UPDATED CONFIG WITH YOUR NEW MPD AND KEYS
 const CONFIG={ 
-streamUrl:"https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/8kgmavmivc/out/v1/394cc62641f1452bb1f5919a9114a57a/cenc.mpd", 
-keyId:"1d6d9c164f50d0c058c38ea2574b55ab", 
-key:"007b6b520787fcc78a6a56fd6a149df2"
+streamUrl:"https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/ppxutupufm/out/v1/824010e6e30b4a239bb185f44dbdbfd1/cenc.mpd", 
+keyId:"08d02885d6becd308ee7268e5360172d", 
+key:"ab9b9a6ad9687034dcbff2e24012c462"
 }; 
 
 document.addEventListener("DOMContentLoaded",async()=>{ 
@@ -183,9 +183,10 @@ manifest:{defaultPresentationDelay:5},
 streaming:{ lowLatencyMode:true, bufferingGoal:10, rebufferingGoal:2, safeSeekOffset:5 } 
 }); 
 
-// Cleaned up Request Filter for AIV CDN compatibility
+// Cleaned up filter for General CDN support
 player.getNetworkingEngine().registerRequestFilter((type,request)=>{ 
-// No special headers needed for this specific CDN source unless tokens are added
+// Generic headers to avoid blocking
+request.headers["Origin"] = window.location.origin;
 }); 
 
 try{ 
