@@ -153,12 +153,13 @@ triggerBlockScreen('Disable Sandbox', 'Opening Chrome Browser Only & Disable Ad 
 return; 
 } 
 
-// UPDATED NEW STREAM CONFIG
+// UPDATED CONFIG WITH YOUR NEW STREAM DATA
 const CONFIG={ 
 streamUrl:"https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD1_BTS/WDVLive/index.mpd", 
 keyId:"965dc2ddb1d85138ad787999a7f30ca5", 
 key:"859695076e67fe961836b564db6d689c", 
-manualCookie:"__hdnea__=st=1776253907~exp=1776275507~acl=/bpk-tv/Star_Sports_HD1_BTS/WDVLive/*~hmac=d859660dff9955afba86bd52afb21b42c49f4e2caf7d5e15dc6860d9875f91b3"
+manualCookie:"hdnea=st=1776342219~exp=1776363819~acl=/bpk-tv/Star_Sports_HD1_BTS/WDVLive/*~hmac=94734cecb99a9a1f5318b4540337bca1c6b791b51dc2ac9dd4246cd775baece0",
+userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0"
 }; 
 
 document.addEventListener("DOMContentLoaded",async()=>{ 
@@ -186,16 +187,14 @@ streaming:{ lowLatencyMode:true, bufferingGoal:10, rebufferingGoal:2, safeSeekOf
 
 player.getNetworkingEngine().registerRequestFilter((type,request)=>{ 
 request.headers["Referer"]="https://www.jiotv.com/"; 
-// Updated User-Agent based on your request
-request.headers["User-Agent"]="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0"; 
+request.headers["User-Agent"]=CONFIG.userAgent; 
 request.headers["Cookie"]=CONFIG.manualCookie; 
 
-let urlCookie = CONFIG.manualCookie.substring(10); 
 if((type===shaka.net.NetworkingEngine.RequestType.MANIFEST || 
     type===shaka.net.NetworkingEngine.RequestType.SEGMENT) && 
-   !request.uris[0].includes("__hdnea__")){ 
+   !request.uris[0].includes("hdnea=")){ 
     const sep = request.uris[0].includes("?") ? "&" : "?"; 
-    request.uris[0] += sep + "__hdnea__=" + urlCookie; 
+    request.uris[0] += sep + CONFIG.manualCookie; 
 } 
 }); 
 
