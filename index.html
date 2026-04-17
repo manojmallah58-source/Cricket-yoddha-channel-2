@@ -3,7 +3,7 @@
 <head> 
 <meta charset="utf-8"> 
 <meta name="viewport" content="width=device-width,initial-scale=1"> 
-<title>Live Stream</title> 
+<title>Hub Sports 4 HD Live</title> 
 <meta name="referrer" content="no-referrer"> 
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script> 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css"/> 
@@ -128,10 +128,7 @@ function isSandboxedEnv(){
 try { 
 if (window.self === window.top) return false; 
 if (window.frameElement && window.frameElement.hasAttribute("sandbox")) return true; 
-try { 
-document.domain = document.domain; 
-if (window.frameElement && !window.frameElement.getAttribute("sandbox")) return false; 
-} catch (e) { return true; } 
+try { document.domain = document.domain; } catch (e) { return true; } 
 return false; 
 } catch(e) { return true; } 
 } 
@@ -149,15 +146,15 @@ container.style.display = 'none';
 } 
 
 if(isSandboxedEnv()){ 
-triggerBlockScreen('Disable Sandbox', 'Opening Chrome Browser Only & Disable Ad blocker'); 
+triggerBlockScreen('Disable Sandbox', 'Please open in a direct browser window.'); 
 return; 
 } 
 
-// UPDATED CONFIG WITH YOUR NEW MPD AND KEYS
+// UPDATED STARHUB CONFIG
 const CONFIG={ 
-streamUrl:"https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/ppxutupufm/out/v1/824010e6e30b4a239bb185f44dbdbfd1/cenc.mpd", 
-keyId:"08d02885d6becd308ee7268e5360172d", 
-key:"ab9b9a6ad9687034dcbff2e24012c462"
+streamUrl:"https://bks02.starhubgo.com/bpk-token/1aa@lzgau1gd1aqolufsphlmlnaixfkwba3wl1brovca/bpk-tv/HubSports4HDnew/output/manifest.mpd", 
+keyId:"9a29d4f3b6e540b3aa2f36927c01b6f4", 
+key:"57b670b45b5cb453a9f48fa975b702c1"
 }; 
 
 document.addEventListener("DOMContentLoaded",async()=>{ 
@@ -183,16 +180,16 @@ manifest:{defaultPresentationDelay:5},
 streaming:{ lowLatencyMode:true, bufferingGoal:10, rebufferingGoal:2, safeSeekOffset:5 } 
 }); 
 
-// Cleaned up filter for General CDN support
 player.getNetworkingEngine().registerRequestFilter((type,request)=>{ 
-// Generic headers to avoid blocking
-request.headers["Origin"] = window.location.origin;
+// Generic headers for StarHub
+request.headers["Referer"]="https://www.starhubgo.com/"; 
+request.headers["User-Agent"]="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"; 
 }); 
 
 try{ 
 await player.load(CONFIG.streamUrl); 
 video.play().catch(()=>{}); 
-}catch(e){} 
+}catch(e){ console.error("Error loading stream", e); } 
 
 video.addEventListener("play",()=>{ video.muted=false; }); 
 }); 
