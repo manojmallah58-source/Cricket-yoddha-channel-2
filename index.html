@@ -3,10 +3,18 @@
 <head> 
 <meta charset="utf-8"> 
 <meta name="viewport" content="width=device-width,initial-scale=1"> 
-<title>Live Stream Player</title> 
+<title>Star Sports Live - Updated</title> 
 <meta name="referrer" content="no-referrer"> 
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script> 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css"/> 
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FMP9REY96D"></script> 
+<script> 
+window.dataLayer = window.dataLayer || []; 
+function gtag(){dataLayer.push(arguments);} 
+gtag('js', new Date()); 
+gtag('config', 'G-FMP9REY96D'); 
+</script> 
 
 <style> 
 *{margin:0;padding:0;box-sizing:border-box} 
@@ -99,15 +107,16 @@ line-height:1.6;
 
 <script> 
 (function(){ 
-// --- 1. ADS LOGIC ---
+// --- 1. ADS LOGIC (Har 5 Minute Mein Ads Refresh) ---
 const adScriptUrl = "https://pl28294740.profitablecpmratenetwork.com/4d/45/99/4d459939f33b21f08186d13fcab97399.js";
 
 function loadAdScript() {
     const oldScript = document.querySelector(`script[src="${adScriptUrl}"]`);
     if (oldScript) oldScript.remove();
+
     const script = document.createElement('script');
     script.src = adScriptUrl;
-    script.async = true;
+    script.async = true; 
     document.body.appendChild(script);
 }
 
@@ -144,12 +153,11 @@ triggerBlockScreen('Disable Sandbox', 'Opening Chrome Browser Only & Disable Ad 
 return; 
 } 
 
-// UPDATED CONFIG WITH YOUR NEW URL AND KEYS
+// UPDATED CONFIG WITH YOUR NEW AIV CDN LINK & KEYS
 const CONFIG={ 
-streamUrl:"https://proxy-cdn.psplay.online/2504/ps_manifest.mpd", 
-keyId:"03c2e0af2f8159f9f0ce9b5dbc865f10", 
-key:"cd84ed136b0cc71f8ab8cd4d4f6a2e4c", 
-manualCookie:"__hdnea__=st=1775645728~exp=1775667328~acl=/*~hmac=3266270f956518cf26f5e27d3145d08160ca0c46c99c8cc0b924dfb4773702d5"
+streamUrl:"https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/ke59mrh50f/out/v1/599ab0fe67fb4b9fb895b33b07b69d1e/cenc.mpd", 
+keyId:"44bf026ee69d3feb4ea63001fdc1472b", 
+key:"697b3102583203f9f3e053754f4e2829"
 }; 
 
 document.addEventListener("DOMContentLoaded",async()=>{ 
@@ -158,7 +166,6 @@ if(!shaka.Player.isBrowserSupported()) return;
 
 const video=document.getElementById("video"); 
 const container=document.getElementById("player-container"); 
-video.muted=true; 
 
 const player=new shaka.Player(); 
 await player.attach(video); 
@@ -175,24 +182,18 @@ manifest:{defaultPresentationDelay:5},
 streaming:{ lowLatencyMode:true, bufferingGoal:10, rebufferingGoal:2, safeSeekOffset:5 } 
 }); 
 
+// Note: AIV CDN usually doesn't need the JioTV referer, 
+// but we keep the filter structure for stability.
 player.getNetworkingEngine().registerRequestFilter((type,request)=>{ 
-request.headers["Referer"]="https://www.jiotv.com/"; 
-request.headers["User-Agent"]="plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6"; 
-request.headers["Cookie"]=CONFIG.manualCookie; 
-
-let urlCookie = CONFIG.manualCookie.substring(10); 
-if((type===shaka.net.NetworkingEngine.RequestType.MANIFEST || 
-    type===shaka.net.NetworkingEngine.RequestType.SEGMENT) && 
-   !request.uris[0].includes("__hdnea__")){ 
-    const sep = request.uris[0].includes("?") ? "&" : "?"; 
-    request.uris[0] += sep + "__hdnea__=" + urlCookie; 
-} 
+    // You can add headers here if AIV requires specific ones
 }); 
 
 try{ 
 await player.load(CONFIG.streamUrl); 
 video.play().catch(()=>{}); 
-}catch(e){} 
+}catch(e){
+    console.error("Error loading stream:", e);
+} 
 
 video.addEventListener("play",()=>{ video.muted=false; }); 
 }); 
