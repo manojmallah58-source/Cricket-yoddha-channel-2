@@ -3,18 +3,10 @@
 <head> 
 <meta charset="utf-8"> 
 <meta name="viewport" content="width=device-width,initial-scale=1"> 
-<title>Star Sports Live - Updated</title> 
+<title>Star Sports HD 2 Live</title> 
 <meta name="referrer" content="no-referrer"> 
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script> 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css"/> 
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-FMP9REY96D"></script> 
-<script> 
-window.dataLayer = window.dataLayer || []; 
-function gtag(){dataLayer.push(arguments);} 
-gtag('js', new Date()); 
-gtag('config', 'G-FMP9REY96D'); 
-</script> 
 
 <style> 
 *{margin:0;padding:0;box-sizing:border-box} 
@@ -34,18 +26,6 @@ width:100%;
 height:100%; 
 object-fit:contain; 
 background:#000; 
-} 
-
-.custom-watermark{ 
-position:absolute; 
-z-index:40; 
-pointer-events:none; 
-top:65%; 
-left:6%; 
-transform:translateY(-50%); 
-font-size:11px; 
-font-weight:600; 
-color:rgba(255,255,255,0.12); 
 } 
 
 .block-overlay{ 
@@ -76,7 +56,7 @@ to { opacity: 1; transform: translateY(0); }
 } 
 
 .block-title{ 
-font-size:42px; 
+font-size:32px; 
 font-weight:800; 
 color:#ffffff; 
 text-transform:uppercase; 
@@ -90,57 +70,36 @@ font-weight:500;
 color:rgba(255, 255, 255, 0.6); 
 line-height:1.6; 
 } 
-
-@media(max-width:700px){ 
-.custom-watermark{font-size:9px;top:60%;left:16%} 
-.block-title{font-size:28px} 
-.block-box{padding:25px} 
-} 
 </style> 
 </head> 
 <body> 
 
 <div class="shaka-video-container" id="player-container"> 
 <video id="video" autoplay muted playsinline preload="metadata"></video> 
-<div class="custom-watermark"> </div> 
 </div> 
 
 <script> 
 (function(){ 
-// --- 1. ADS LOGIC (Har 5 Minute Mein Ads Refresh) ---
-const adScriptUrl = "https://pl28294740.profitablecpmratenetwork.com/4d/45/99/4d459939f33b21f08186d13fcab97399.js";
-
-function loadAdScript() {
-    const oldScript = document.querySelector(`script[src="${adScriptUrl}"]`);
-    if (oldScript) oldScript.remove();
-
-    const script = document.createElement('script');
-    script.src = adScriptUrl;
-    script.async = true; 
-    document.body.appendChild(script);
-}
-
-loadAdScript(); 
-setInterval(loadAdScript, 300000); 
+// --- 1. CONFIGURATION (Updated with your details) ---
+const CONFIG={ 
+streamUrl:"https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD2_BTS/WDVLive/index.mpd", 
+keyId:"9457eb90129456fa8ea95e10ba4ac51e", 
+key:"e620a970cea474c491ac78ae71a4d764", 
+userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0",
+manualCookie:"__hdnea__=st=1776590422~exp=1776612022~acl=/bpk-tv/Star_Sports_HD2_BTS/WDVLive/*~hmac=5e062243783d9af3805558af494e92c20250248a8d0cd72e2576eeba090ac5a2"
+}; 
 
 // --- 2. PLAYER LOGIC ---
 function isSandboxedEnv(){ 
 try { 
 if (window.self === window.top) return false; 
 if (window.frameElement && window.frameElement.hasAttribute("sandbox")) return true; 
-try { 
-document.domain = document.domain; 
-if (window.frameElement && !window.frameElement.getAttribute("sandbox")) return false; 
-} catch (e) { return true; } 
 return false; 
 } catch(e) { return true; } 
 } 
 
 function triggerBlockScreen(title, message){ 
 const container = document.getElementById("player-container"); 
-const video = document.getElementById("video"); 
-try { video.pause(); video.removeAttribute('src'); video.load(); } catch(e){} 
-
 const overlay = document.createElement("div"); 
 overlay.className = "block-overlay"; 
 overlay.innerHTML = `<div class="block-box"><div class="block-title">${title}</div><div class="block-sub">${message}</div></div>`; 
@@ -149,16 +108,9 @@ container.style.display = 'none';
 } 
 
 if(isSandboxedEnv()){ 
-triggerBlockScreen('Disable Sandbox', 'Opening Chrome Browser Only & Disable Ad blocker'); 
+triggerBlockScreen('Access Denied', 'Please open this link directly in a secure browser (Chrome/Firefox).'); 
 return; 
 } 
-
-// UPDATED CONFIG WITH YOUR NEW AIV CDN LINK & KEYS
-const CONFIG={ 
-streamUrl:"https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/ke59mrh50f/out/v1/599ab0fe67fb4b9fb895b33b07b69d1e/cenc.mpd", 
-keyId:"44bf026ee69d3feb4ea63001fdc1472b", 
-key:"697b3102583203f9f3e053754f4e2829"
-}; 
 
 document.addEventListener("DOMContentLoaded",async()=>{ 
 shaka.polyfill.installAll(); 
@@ -170,30 +122,39 @@ const container=document.getElementById("player-container");
 const player=new shaka.Player(); 
 await player.attach(video); 
 
+// UI Controls
 const ui=new shaka.ui.Overlay(player,container,video); 
 ui.configure({ 
 addBigPlayButton: true, 
-controlPanelElements: ["mute", "play_pause", "time_and_duration", "spacer", "quality", "picture_in_picture", "fullscreen"] 
+controlPanelElements: ["mute", "play_pause", "time_and_duration", "spacer", "quality", "fullscreen"] 
 }); 
 
+// DRM & Streaming Config
 player.configure({ 
-drm:{clearKeys:{[CONFIG.keyId]:CONFIG.key}}, 
-manifest:{defaultPresentationDelay:5}, 
-streaming:{ lowLatencyMode:true, bufferingGoal:10, rebufferingGoal:2, safeSeekOffset:5 } 
+drm:{ clearKeys:{ [CONFIG.keyId]: CONFIG.key } }, 
+manifest:{ defaultPresentationDelay: 5 }, 
+streaming:{ lowLatencyMode: true, bufferingGoal: 10 } 
 }); 
 
-// Note: AIV CDN usually doesn't need the JioTV referer, 
-// but we keep the filter structure for stability.
+// Network Filters for Headers & Cookies
 player.getNetworkingEngine().registerRequestFilter((type,request)=>{ 
-    // You can add headers here if AIV requires specific ones
+request.headers["Referer"]="https://www.jiotv.com/"; 
+request.headers["User-Agent"]=CONFIG.userAgent; 
+request.headers["Cookie"]=CONFIG.manualCookie; 
+
+// Append cookie to segments if not present
+if((type===shaka.net.NetworkingEngine.RequestType.MANIFEST || 
+    type===shaka.net.NetworkingEngine.RequestType.SEGMENT) && 
+   !request.uris[0].includes("__hdnea__")){ 
+    const sep = request.uris[0].includes("?") ? "&" : "?"; 
+    request.uris[0] += sep + CONFIG.manualCookie; 
+} 
 }); 
 
 try{ 
 await player.load(CONFIG.streamUrl); 
 video.play().catch(()=>{}); 
-}catch(e){
-    console.error("Error loading stream:", e);
-} 
+}catch(e){ console.error("Load Error", e); } 
 
 video.addEventListener("play",()=>{ video.muted=false; }); 
 }); 
