@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Sports HD 1</title>
+    <title>Star Sports 1 HD - Live</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">
     <style>
@@ -27,8 +27,9 @@
             background: #000;
             object-fit: contain;
         }
-        /* Hide Spinner */
-        .shaka-spinner-container, .shaka-spinner, .shaka-spinner-svg {
+        .shaka-spinner-container,
+        .shaka-spinner,
+        .shaka-spinner-svg {
             display: none !important;
             visibility: hidden !important;
             opacity: 0 !important;
@@ -66,14 +67,17 @@
                 seekBarColors: { base: 'white', buffered: 'red', played: 'blue' }
             });
 
-            // Updated Stream and DRM Configuration
-            const streamUrl = "https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD1_BTS/WDVLive/index.mpd?__hdnea__=st=1777546816~exp=1777568416~acl=/bpk-tv/Star_Sports_HD1_BTS/WDVLive/*~hmac=56eb4fd816a254378b52ff0e33254d84619dd638c80f32a3687c886bc143db62";
+            // Updated Stream URL and DRM Config
+            const streamUrl = "https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD1_BTS/WDVLive/index.mpd?__hdnea__=st=1777547964~exp=1777569564~acl=/bpk-tv/Star_Sports_HD1_BTS/WDVLive/*~hmac=39c663cc876630a544a826185a434e3ca490e727fd972f5368531c0def99e1ec";
             
-            const drmConfig = {
+            let drmConfig = {
                 clearKeys: {
-                    "965dc2ddb1d85138ad787999a7f30ca5": "859695076e67fe961836b564db6d689c"
+                    "df20894ec30954d3b28097c138f4cfda": "ff9b6292b1cddbd11a046029cb314634"
                 }
             };
+
+            // Extract token from URL to use in headers if needed
+            const urlParams = streamUrl.split('?')[1] || "";
 
             player.configure({
                 drm: drmConfig,
@@ -81,6 +85,8 @@
                     lowLatencyMode: true,
                     bufferingGoal: 15,
                     rebufferingGoal: 2,
+                    bufferBehind: 15,
+                    retryParameters: { timeout: 10000, maxAttempts: 5 },
                     useNativeHlsOnSafari: true
                 }
             });
@@ -88,9 +94,16 @@
             player.getNetworkingEngine().registerRequestFilter((type, request) => {
                 request.headers['Referer'] = 'https://www.jiotv.com/';
                 request.headers['User-Agent'] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
+                
+                // Adding the authentication token to each segment request
+                if (type === shaka.net.NetworkingEngine.RequestType.SEGMENT || type === shaka.net.NetworkingEngine.RequestType.MANIFEST) {
+                    if (!request.uris[0].includes('__hdnea__')) {
+                        const separator = request.uris[0].includes('?') ? '&' : '?';
+                        request.uris[0] += separator + urlParams;
+                    }
+                }
             });
 
-            // Autoplay Logic
             const attemptAutoplay = async () => {
                 try {
                     video.muted = false;
@@ -105,9 +118,9 @@
                 console.error('Shaka Player Error:', event.detail);
             });
 
-            // Fullscreen on mobile play
+            // Handle Fullscreen on Mobile
             video.addEventListener('play', () => {
-                if (window.innerWidth <= 768) {
+                if (window.innerWidth <= 768 && !document.fullscreenElement) {
                     container.requestFullscreen().catch(() => {});
                 }
             }, { once: true });
@@ -118,17 +131,6 @@
             } catch (error) {
                 console.error('Load error:', error);
             }
-
-            // Unmute on first interaction
-            const unlockAudio = () => {
-                if (video.muted) {
-                    video.muted = false;
-                }
-                document.removeEventListener('click', unlockAudio);
-                document.removeEventListener('touchstart', unlockAudio);
-            };
-            document.addEventListener('click', unlockAudio);
-            document.addEventListener('touchstart', unlockAudio);
         });
     </script>
 </body>
