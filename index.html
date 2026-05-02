@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Sports 1 HD</title>
+    <title>Star Sports HD 1</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">
     <style>
@@ -74,19 +74,19 @@
                 }
             });
 
-            // UPDATED DRM KEYS
+            // Naye link se extracted DRM Keys
             let drmConfig = {
                 clearKeys: {
                     "965dc2ddb1d85138ad787999a7f30ca5": "859695076e67fe961836b564db6d689c"
                 }
             };
 
-            // UPDATED STREAM URL
-            let streamUrl = "https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD1_BTS/WDVLive/index.mpd?__hdnea__=st=1777689547~exp=1777711147~acl=/bpk-tv/Star_Sports_HD1_BTS/WDVLive/*~hmac=a84b9f0a86b153edf3445cd0a25915cc6b5217951e2cc749edec3513f9c3b542";
+            // Naya Cookie Header
+            let cookieHeader = "__hdnea__=st=1777726558~exp=1777748158~acl=/bpk-tv/Star_Sports_HD1_BTS/WDVLive/*~hmac=a21f7c397fe7fc6ada98401c0cb9e1061df71809268ba731671f88e7aeb4f8cc";
             
-            let cookieHeader = ""; 
+            // Naya Stream URL
+            let streamUrl = "https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD1_BTS/WDVLive/index.mpd";
 
-            // Logic to handle network requests
             player.configure({
                 drm: drmConfig,
                 streaming: {
@@ -115,26 +115,28 @@
             player.getNetworkingEngine().registerRequestFilter((type, request) => {
                 request.headers['Referer'] = 'https://www.jiotv.com/';
                 request.headers['User-Agent'] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
-            });
+                request.headers['Cookie'] = cookieHeader;
 
-            const enableAutoplay = () => {
-                video.setAttribute('autoplay', '');
-                video.setAttribute('playsinline', '');
-                video.autoplay = true;
-            };
+                if (
+                    (type === shaka.net.NetworkingEngine.RequestType.MANIFEST || 
+                     type === shaka.net.NetworkingEngine.RequestType.SEGMENT) &&
+                    request.uris[0] && !request.uris[0].includes('__hdnea=')
+                ) {
+                    const separator = request.uris[0].includes('?') ? '&' : '?';
+                    request.uris[0] += separator + cookieHeader;
+                }
+            });
 
             const attemptAutoplay = async () => {
                 try {
                     video.muted = false;
                     await video.play();
-                    return true;
                 } catch (error) {
                     try {
                         video.muted = true;
                         await video.play();
-                        return true;
                     } catch (mutedError) {
-                        return false;
+                        console.error('Autoplay failed');
                     }
                 }
             };
@@ -149,10 +151,6 @@
                 }
             }, { once: true });
 
-            video.addEventListener('loadedmetadata', () => {
-                video.volume = 0.8;
-            });
-
             let hasUserInteracted = false;
             const enableSoundOnInteraction = () => {
                 if (!hasUserInteracted && video.muted) {
@@ -165,27 +163,15 @@
             });
 
             try {
-                enableAutoplay();
                 await player.load(streamUrl);
                 if (video.readyState >= 3) {
                     await attemptAutoplay();
                 } else {
                     video.addEventListener('canplay', attemptAutoplay, { once: true });
-                    setTimeout(async () => {
-                        if (video.paused) {
-                            await attemptAutoplay();
-                        }
-                    }, 2000);
                 }
             } catch (error) {
                 console.error('Load error:', error);
             }
-
-            document.addEventListener('visibilitychange', () => {
-                if (!document.hidden && video.paused) {
-                    attemptAutoplay();
-                }
-            });
         });
     </script>
 </body>
