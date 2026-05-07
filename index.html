@@ -1,92 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>CRICKET SUPERFANS Player</title>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<title>Star Sports 1 HD — CRICKET SUPERFANS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 
-    <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #000; overflow: hidden; font-family: sans-serif; }
-        #video-container { width: 100%; height: 100%; background: #000; }
-        video { width: 100%; height: 100%; }
-        /* Mobile optimization for Shaka UI */
-        .shaka-video-container { width: 100% !important; height: 100% !important; }
-        .shaka-controls-container { z-index: 999; }
-    </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css">
+
+<style>
+:root {
+    --bg-body: #0d0d18; --accent: #e8534a; --text-primary: #f0f0f5; --radius: 16px;
+}
+html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; font-family: 'Outfit', sans-serif; }
+.player-area { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: #000; overflow: hidden; }
+.video-container { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+video { width: 100%; height: 100%; object-fit: contain; }
+.shaka-video-container { width: 100% !important; height: 100% !important; }
+.shaka-controls-container { z-index: 9999; padding-bottom: env(safe-area-inset-bottom); }
+</style>
 </head>
 <body>
 
-    <div id="video-container" data-shaka-player-container>
-        <video autoplay playsinline data-shaka-player id="video"></video>
+<div class="player-area">
+    <div class="video-container" data-shaka-player-container>
+        <video autoplay muted playsinline webkit-playsinline data-shaka-player id="video" poster="http://ttpl.tmsimg.com/assets/p27485133_b_h10_ab.jpg"></video>
     </div>
+</div>
 
-    <script>
-        // UPDATE THESE VALUES REGULARLY
-        const streamConfig = {
-            mpd: "https://bpaita2.akamaized.net/bpk-tv/irdeto_com_Channel_250/output/manifest.mpd",
-            token: "hdntl=exp=1778174146~acl=%2fbpk-tv%2firdeto_com_Channel_250%2foutput%2f*~id=9905477177~data=hdntl~hmac=f314f484e2807a4180c97a703db83f1a745f138d08abf4650671a10070884006",
-            referer: "https://www.tataplaybinge.com/",
-            userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-            drmKeys: {
-                "06341bf3dd635e6ca5c71188d0210373": "2c6d9ccbf866eee8c42dcf9c343f179b"
-            }
-        };
+<script>
+const streamConfig = {
+    mpd: "https://bpaita2.akamaized.net/bpk-tv/irdeto_com_Channel_250/output/manifest.mpd",
+    token: "hdntl=exp=1778174146~acl=%2fbpk-tv%2firdeto_com_Channel_250%2foutput%2f*~id=9905477177~data=hdntl~hmac=f314f484e2807a4180c97a703db83f1a745f138d08abf4650671a10070884006",
+    referer: "https://www.tataplaybinge.com/",
+    userAgent: "Mozilla/5.0 (Linux; Android 13; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
+    drm: { "06341bf3dd635e6ca5c71188d0210373": "2c6d9ccbf866eee8c42dcf9c343f179b" }
+};
 
-        async function initPlayer() {
-            shaka.polyfill.installAll();
-            if (!shaka.Player.isBrowserSupported()) {
-                alert("Aapka browser support nahi kar raha hai.");
-                return;
-            }
+document.addEventListener('DOMContentLoaded', async () => {
+    shaka.polyfill.installAll();
+    const video = document.getElementById('video');
+    const videoContainer = document.querySelector('[data-shaka-player-container]');
+    const player = new shaka.Player(video);
+    const ui = new shaka.ui.Overlay(player, videoContainer, video);
 
-            const video = document.getElementById('video');
-            const container = document.getElementById('video-container');
-            const player = new shaka.Player(video);
-            const ui = new shaka.ui.Overlay(player, container, video);
+    ui.configure({
+        controlPanelElements: ['play_pause', 'time_and_duration', 'spacer', 'mute', 'fullscreen', 'quality', 'overflow_menu'],
+        seekBarColors: { base: 'rgba(255,255,255,0.2)', buffered: 'rgba(255,255,255,0.4)', played: '#e8534a' }
+    });
 
-            // Configure DRM and Retry Logic
-            player.configure({
-                drm: { clearKeys: streamConfig.drmKeys },
-                streaming: {
-                    bufferingGoal: 30,
-                    rebufferingGoal: 10,
-                    retryParameters: { maxAttempts: 3 }
-                }
-            });
+    player.configure({
+        drm: { clearKeys: streamConfig.drm },
+        streaming: { bufferingGoal: 30, rebufferingGoal: 15 }
+    });
 
-            // Handle Headers (Referer & Token)
-            player.getNetworkingEngine().registerRequestFilter((type, request) => {
-                request.headers['Referer'] = streamConfig.referer;
-                request.headers['User-Agent'] = streamConfig.userAgent;
-                
-                if (type === shaka.net.NetworkingEngine.RequestType.MANIFEST || 
-                    type === shaka.net.NetworkingEngine.RequestType.SEGMENT) {
-                    const sep = request.uris[0].includes('?') ? '&' : '?';
-                    request.uris[0] += sep + streamConfig.token;
-                }
-            });
-
-            try {
-                await player.load(streamConfig.mpd);
-                console.log("Stream Loaded!");
-            } catch (e) {
-                console.error("Load Error:", e.code, e.message);
-                if (e.code === 6007) alert("DRM Key expire ho gayi hai!");
-                if (e.code === 1002) alert("Token invalid ya expire ho gaya hai!");
-            }
+    player.getNetworkingEngine().registerRequestFilter((type, request) => {
+        request.headers['Referer'] = streamConfig.referer;
+        request.headers['User-Agent'] = streamConfig.userAgent;
+        if (type === shaka.net.NetworkingEngine.RequestType.MANIFEST || type === shaka.net.NetworkingEngine.RequestType.SEGMENT) {
+            const sep = request.uris[0].includes('?') ? '&' : '?';
+            request.uris[0] += sep + streamConfig.token;
         }
+    });
 
-        document.addEventListener('shaka-ui-loaded', initPlayer);
-        
-        // Mobile Autoplay bypass
-        document.addEventListener('click', () => {
-            const v = document.getElementById('video');
-            if (v.paused) v.play().catch(() => {});
-        }, { once: true });
+    try {
+        await player.load(streamConfig.mpd);
+    } catch (e) {
+        console.error('Error loading stream', e);
+    }
+});
 
-    </script>
+// Force Play for Mobile
+const forcePlay = () => {
+    const video = document.getElementById('video');
+    video.play().catch(() => {
+        setTimeout(forcePlay, 1000);
+    });
+};
+document.addEventListener("touchstart", forcePlay, { once: true });
+</script>
 </body>
 </html>
