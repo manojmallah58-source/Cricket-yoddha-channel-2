@@ -2,61 +2,90 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Star Sports 1 HD — Clean Player</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Star Sports 1 HD — Ad-Free Player</title>
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css">
 
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
+        :root {
+            --bg-body: #000;
+            --accent: #e8534a;
+            --text-primary: #f0f0f5;
+        }
+
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
             width: 100%;
             height: 100%;
-            background: #000;
+            overflow: hidden !important;
+            background: #000 !important;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .player-area {
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100dvh;
+            background: #000 !important;
             overflow: hidden;
         }
 
         .video-container {
-            width: 100vw;
-            height: 100vh;
+            width: 100% !important;
+            height: 100% !important;
+            background: #000 !important;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        /* Shaka UI Customization */
         .shaka-video-container {
             width: 100% !important;
             height: 100% !important;
+            background: #000 !important;
         }
-        
+
+        video {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important;
+        }
+
         .shaka-controls-container {
-            z-index: 100 !important;
-        }
-        
-        .shaka-bottom-controls {
+            z-index: 9999 !important;
             padding-bottom: env(safe-area-inset-bottom) !important;
+        }
+
+        .shaka-overflow-menu {
+            max-height: 70vh !important;
+            background: rgba(20, 20, 30, 0.9) !important;
+            color: white !important;
         }
     </style>
 </head>
 <body>
 
-    <div class="video-container" data-shaka-player-container>
-        <video autoplay muted playsinline id="video" 
-               poster="http://ttpl.tmsimg.com/assets/p27485133_b_h10_ab.jpg?lock=1280x720">
-        </video>
+    <div class="player-area">
+        <div class="video-container" data-shaka-player-container>
+            <video autoplay muted playsinline webkit-playsinline data-shaka-player id="video" 
+                   poster="http://ttpl.tmsimg.com/assets/p27485133_b_h10_ab.jpg?lock=1280x720"></video>
+        </div>
     </div>
 
     <script>
-        // Stream Configuration
         const streamConfig = {
             mpd: "https://bpaita2.akamaized.net/bpk-tv/irdeto_com_Channel_250/output/manifest.mpd",
             token: "hdntl=exp=1778174146~acl=%2fbpk-tv%2firdeto_com_Channel_250%2foutput%2f*~id=9905477177~data=hdntl~hmac=f314f484e2807a4180c97a703db83f1a745f138d08abf4650671a10070884006",
@@ -68,19 +97,29 @@
         };
 
         async function initPlayer() {
-            shaka.polyfill.installAll();
+            const video = document.getElementById('video');
+            const videoContainer = document.querySelector('[data-shaka-player-container]');
             
+            shaka.polyfill.installAll();
             if (!shaka.Player.isBrowserSupported()) {
-                console.error('Browser not supported!');
+                console.error('Browser not supported');
                 return;
             }
 
-            const video = document.getElementById('video');
-            const videoContainer = document.querySelector('[data-shaka-player-container]');
             const player = new shaka.Player(video);
             const ui = new shaka.ui.Overlay(player, videoContainer, video);
 
-            // Configure Player
+            // UI Configuration
+            ui.configure({
+                controlPanelElements: ['play_pause', 'time_and_duration', 'spacer', 'mute', 'fullscreen', 'quality', 'overflow_menu'],
+                seekBarColors: {
+                    base: 'rgba(255,255,255,0.2)',
+                    buffered: 'rgba(255,255,255,0.4)',
+                    played: '#e8534a'
+                }
+            });
+
+            // Player Configuration
             player.configure({
                 drm: { clearKeys: streamConfig.drm },
                 streaming: {
@@ -89,14 +128,14 @@
                 }
             });
 
-            // Request Filters (Referer & Token)
+            // Network Filters (Token & Headers)
             player.getNetworkingEngine().registerRequestFilter((type, request) => {
                 request.headers['Referer'] = streamConfig.referer;
                 request.headers['User-Agent'] = streamConfig.userAgent;
-
+                
                 if ((type === shaka.net.NetworkingEngine.RequestType.MANIFEST || 
                      type === shaka.net.NetworkingEngine.RequestType.SEGMENT) && 
-                     !request.uris[0].includes('__hdnea')) {
+                    !request.uris[0].includes('hdntl')) {
                     const sep = request.uris[0].includes('?') ? '&' : '?';
                     request.uris[0] += sep + streamConfig.token;
                 }
@@ -105,20 +144,18 @@
             try {
                 await player.load(streamConfig.mpd);
                 console.log('Stream loaded successfully');
-            } catch (error) {
-                console.error('Error loading stream:', error);
+            } catch (e) {
+                console.error('Error loading stream', e);
             }
         }
 
-        // Auto-play Fix
-        document.addEventListener('DOMContentLoaded', () => {
-            initPlayer();
-            // Sound enable karne ke liye screen par click zaroori hai (Browser policy)
-            document.body.addEventListener('click', () => {
-                const video = document.getElementById('video');
-                video.muted = false;
-            }, { once: true });
-        });
+        document.addEventListener('DOMContentLoaded', initPlayer);
+
+        // Auto-play fix for mobile browsers
+        document.body.addEventListener('touchstart', () => {
+            const video = document.getElementById('video');
+            if (video.paused) video.play();
+        }, { once: true });
     </script>
 </body>
 </html>
