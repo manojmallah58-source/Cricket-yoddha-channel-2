@@ -8,46 +8,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body {
-            background: #000;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            font-family: system-ui, -apple-system, sans-serif;
-        }
-        .shaka-video-container {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-        }
-        video {
-            width: 100%;
-            height: 100%;
-            background: #000;
-            object-fit: contain;
-        }
-        /* Spinner hide karne ke liye */
-        .shaka-spinner-container, .shaka-spinner, .shaka-spinner-svg {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-        }
+        html, body { background: #000; height: 100vh; width: 100vw; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; }
+        .shaka-video-container { position: absolute; inset: 0; width: 100%; height: 100%; }
+        video { width: 100%; height: 100%; background: #000; object-fit: contain; }
+        .shaka-spinner-container, .shaka-spinner, .shaka-spinner-svg { display: none !important; }
     </style>
 </head>
 <body>
     <div class="shaka-video-container" data-shaka-player>
-        <video autoplay playsinline preload="metadata" poster=""></video>
+        <video autoplay playsinline preload="metadata"></video>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             shaka.polyfill.installAll();
-
-            if (!shaka.Player.isBrowserSupported()) {
-                console.error('Browser not supported');
-                return;
-            }
+            if (!shaka.Player.isBrowserSupported()) return;
 
             const video = document.querySelector('video');
             const player = new shaka.Player();
@@ -56,74 +31,60 @@
             const container = document.querySelector('.shaka-video-container');
             const ui = new shaka.ui.Overlay(player, container, video);
 
-            ui.configure({
-                controlPanelElements: [
-                    'play_pause', 'time_and_duration', 'mute', 'volume',
-                    'spacer', 'language', 'captions', 'picture_in_picture',
-                    'quality', 'fullscreen'
-                ],
-                volumeBarColors: { base: 'purple', level: 'purple' },
-                seekBarColors: { base: 'white', buffered: 'red', played: 'blue' }
-            });
-
-            // --- Naya Data Yahan Replace Kiya Gaya Hai ---
-            let drmConfig = {
+            // Naye values yahan replace kiye gaye hain
+            const streamUrl = "https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD1_BTS/WDVLive/index.mpd";
+            const cookieHeader = "__hdnea__=st=1778237091~exp=1778258691~acl=/bpk-tv/Star_Sports_HD1_BTS/WDVLive/*~hmac=f78e8952fe74d3727318a2bfd89cccaa76b0db15baa6d5a7089af3a6641febd8";
+            
+            const drmConfig = {
                 clearKeys: {
                     "965dc2ddb1d85138ad787999a7f30ca5": "859695076e67fe961836b564db6d689c"
                 }
             };
-            let cookieHeader = "__hdnea__=st=1778155864~exp=1778177464~acl=/bpk-tv/Star_Sports_HD1_BTS/WDVLive/*~hmac=87a153cba81becf147383fb4f2d03581ba49f9523d2449416bcffad269cbfaee";
-            let streamUrl = "https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD1_BTS/WDVLive/index.mpd";
-            // --------------------------------------------
+
+            ui.configure({
+                controlPanelElements: ['play_pause', 'time_and_duration', 'spacer', 'quality', 'fullscreen'],
+                volumeBarColors: { base: 'purple', level: 'purple' }
+            });
 
             player.configure({
                 drm: drmConfig,
                 streaming: {
                     lowLatencyMode: true,
-                    bufferingGoal: 15,
+                    bufferingGoal: 10,
                     rebufferingGoal: 2,
-                    bufferBehind: 15,
-                    retryParameters: { timeout: 10000, maxAttempts: 5 },
                     useNativeHlsOnSafari: true
                 }
             });
 
+            // Network Filter for Auth
             player.getNetworkingEngine().registerRequestFilter((type, request) => {
-                request.headers['Referer'] = 'https://www.jiotv.com/';
                 request.headers['User-Agent'] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
                 request.headers['Cookie'] = cookieHeader;
-
-                // Har segment request ke peeche cookie attach karna zaruri hai
-                if ((type === shaka.net.NetworkingEngine.RequestType.MANIFEST || 
-                     type === shaka.net.NetworkingEngine.RequestType.SEGMENT) && 
-                    request.uris[0] && !request.uris[0].includes('__hdnea=')) {
+                
+                // Har segment request me cookie append karna zaroori hai
+                if (type === shaka.net.NetworkingEngine.RequestType.MANIFEST || type === shaka.net.NetworkingEngine.RequestType.SEGMENT) {
                     const separator = request.uris[0].includes('?') ? '&' : '?';
                     request.uris[0] += separator + cookieHeader;
                 }
             });
 
-            const attemptAutoplay = async () => {
-                try {
-                    video.muted = false;
-                    await video.play();
-                } catch (error) {
-                    video.muted = true;
-                    await video.play();
-                }
-            };
-
-            player.addEventListener('error', (event) => console.error('Shaka Error:', event.detail));
-
             try {
                 await player.load(streamUrl);
-                if (video.readyState >= 3) {
-                    await attemptAutoplay();
-                } else {
-                    video.addEventListener('canplay', attemptAutoplay, { once: true });
-                }
+                console.log('Stream loaded successfully');
             } catch (error) {
-                console.error('Load error:', error);
+                console.error('Error loading stream:', error);
             }
+
+            // Autoplay logic
+            const playVideo = async () => {
+                try {
+                    await video.play();
+                } catch (e) {
+                    video.muted = true;
+                    video.play();
+                }
+            };
+            playVideo();
         });
     </script>
 </body>
