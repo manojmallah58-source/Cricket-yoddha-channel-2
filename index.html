@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ten HD Player</title>
+    <title>Stream Player</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">
     <style>
@@ -75,6 +75,7 @@
                 }
             };
             
+            // Extracting cookie from the URL
             let cookieHeader = "__hdnea__=st=1780977643~exp=1780999243~acl=/*~hmac=f5d2c02f3dce092d065333339d7650636ad4a689b33ce06c146a19ef1e573c9b";
 
             player.configure({
@@ -95,15 +96,43 @@
 
             player.getNetworkingEngine().registerRequestFilter((type, request) => {
                 request.headers['Referer'] = 'https://www.jiotv.com/';
-                request.headers['User-Agent'] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+                request.headers['User-Agent'] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
                 request.headers['Cookie'] = cookieHeader;
+
+                if ((type === shaka.net.NetworkingEngine.RequestType.MANIFEST || 
+                     type === shaka.net.NetworkingEngine.RequestType.SEGMENT) && 
+                    request.uris[0] && !request.uris[0].includes('__hdnea=')) {
+                    const separator = request.uris[0].includes('?') ? '&' : '?';
+                    request.uris[0] += separator + cookieHeader;
+                }
             });
+
+            const attemptAutoplay = async () => {
+                try {
+                    video.muted = false;
+                    await video.play();
+                } catch (error) {
+                    video.muted = true;
+                    await video.play();
+                }
+            };
+
+            player.addEventListener('error', (event) => console.error('Shaka Player Error:', event.detail));
 
             try {
                 await player.load(streamUrl);
+                if (video.readyState >= 3) {
+                    await attemptAutoplay();
+                } else {
+                    video.addEventListener('canplay', attemptAutoplay, { once: true });
+                }
             } catch (error) {
                 console.error('Load error:', error);
             }
+
+            ['click', 'touchstart'].forEach(event => {
+                document.addEventListener(event, () => { if(video.muted) video.muted = false; }, { once: true });
+            });
         });
     </script>
 </body>
