@@ -68,15 +68,15 @@
             });
 
             // UPDATED: New Stream URL and DRM Configuration
-            let streamUrl = "https://jiotvpllive.cdn.jio.com/bpk-tv/Ten_HD_BTS/WDVLive/index.mpd";
+            let streamUrl = "https://jiotvpllive.cdn.jio.com/bpk-tv/Ten_HD_BTS/WDVLive/index.mpd?__hdnea__=st=1781654637~exp=1781676237~acl=/bpk-tv/Ten_HD_BTS/WDVLive/*~hmac=34f9bb8ce4608897b4b98d53130573cda44b14ceb8a69d47c87f45defd9d193c";
+            
             let drmConfig = {
                 clearKeys: {
                     "523acf1f55485476817958a62a3f2ed9": "52b3cea435ed25d445f9eae4883c7001"
                 }
             };
             
-            // Updated Cookie based on your new URL
-            let cookieHeader = "__hdnea__=st=1781489053~exp=1781510653~acl=/bpk-tv/Ten_HD_BTS/WDVLive/*~hmac=8fca0a72b0aa09dc23ce136f63b65005956ecf3684d1ba7a38296e8cd75e11e2";
+            let cookieHeader = "__hdnea__=st=1781654637~exp=1781676237~acl=/bpk-tv/Ten_HD_BTS/WDVLive/*~hmac=34f9bb8ce4608897b4b98d53130573cda44b14ceb8a69d47c87f45defd9d193c";
 
             player.configure({
                 drm: drmConfig,
@@ -130,7 +130,6 @@
                 console.error('Load error:', error);
             }
 
-            // Unmute on first interaction
             ['click', 'touchstart'].forEach(event => {
                 document.addEventListener(event, () => { if(video.muted) video.muted = false; }, { once: true });
             });
