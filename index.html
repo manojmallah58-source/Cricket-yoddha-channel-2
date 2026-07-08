@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ten HD</title>
+    <title>Prime By Allrounder</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body {
@@ -27,9 +29,7 @@
             background: #000;
             object-fit: contain;
         }
-        .shaka-spinner-container,
-        .shaka-spinner,
-        .shaka-spinner-svg {
+        .shaka-spinner-container, .shaka-spinner, .shaka-spinner-svg {
             display: none !important;
             visibility: hidden !important;
             opacity: 0 !important;
@@ -37,8 +37,9 @@
     </style>
 </head>
 <body>
+
     <div class="shaka-video-container" data-shaka-player>
-        <video autoplay playsinline preload="metadata" poster=""></video>
+        <video autoplay playsinline preload="metadata" poster="https://i.ibb.co/d0yXW75V/108693714.jpg"></video>
     </div>
 
     <script>
@@ -63,20 +64,19 @@
                     'spacer', 'language', 'captions', 'picture_in_picture',
                     'quality', 'fullscreen'
                 ],
-                volumeBarColors: { base: 'purple', level: 'purple' },
-                seekBarColors: { base: 'white', buffered: 'red', played: 'blue' }
+                volumeBarColors: { base: 'rgba(255, 192, 203, 0.3)', level: 'rgb(255, 105, 180)' },
+                seekBarColors: { base: 'rgba(255, 255, 0, 0.3)', buffered: 'rgba(255, 255, 0, 0.6)', played: 'rgb(255, 255, 0)' }
             });
 
-            // UPDATED: New Stream URL and DRM Configuration
-            let streamUrl = "https://jiotvpllive.cdn.jio.com/bpk-tv/Ten_HD_BTS/WDVLive/index.mpd";
-            let drmConfig = {
+            // Updated DRM Configuration
+            const drmConfig = {
                 clearKeys: {
-                    "523acf1f55485476817958a62a3f2ed9": "52b3cea435ed25d445f9eae4883c7001"
+                    "14eeabf30c14b7fbf3008c03099ce011": "17d2ac8dbc5429bd70af3433aa12158d"
                 }
             };
-            
-            // Updated cookie header with new stream credentials
-            let cookieHeader = "__hdnea__=st=1782907109~exp=1782928709~acl=/bpk-tv/Ten_HD_BTS/WDVLive/*~hmac=6d2d56663bce9b50fc23ff13d3b1304d0dea939085e02d542a16a6ae9ccafd5a";
+
+            // Updated Stream URL
+            const streamUrl = "https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/w0rehjjrwe/out/v1/69a2a7041395406b970598f61680e7cf/cenc.mpd";
 
             player.configure({
                 drm: drmConfig,
@@ -85,54 +85,21 @@
                     bufferingGoal: 15,
                     rebufferingGoal: 2,
                     bufferBehind: 15,
-                    retryParameters: {
-                        timeout: 10000,
-                        maxAttempts: 5,
-                        baseDelay: 300,
-                        backoffFactor: 1.2
-                    }
+                    retryParameters: { timeout: 10000, maxAttempts: 5, baseDelay: 300, backoffFactor: 1.2 },
+                    segmentRequestTimeout: 8000,
+                    segmentPrefetchLimit: 2,
+                    useNativeHlsOnSafari: true
                 }
             });
-
-            player.getNetworkingEngine().registerRequestFilter((type, request) => {
-                request.headers['Referer'] = 'https://www.jiotv.com/';
-                request.headers['User-Agent'] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
-                request.headers['Cookie'] = cookieHeader;
-
-                if ((type === shaka.net.NetworkingEngine.RequestType.MANIFEST || 
-                     type === shaka.net.NetworkingEngine.RequestType.SEGMENT) && 
-                    request.uris[0] && !request.uris[0].includes('__hdnea=')) {
-                    const separator = request.uris[0].includes('?') ? '&' : '?';
-                    request.uris[0] += separator + cookieHeader;
-                }
-            });
-
-            const attemptAutoplay = async () => {
-                try {
-                    video.muted = false;
-                    await video.play();
-                } catch (error) {
-                    video.muted = true;
-                    await video.play();
-                }
-            };
 
             player.addEventListener('error', (event) => console.error('Shaka Player Error:', event.detail));
 
             try {
                 await player.load(streamUrl);
-                if (video.readyState >= 3) {
-                    await attemptAutoplay();
-                } else {
-                    video.addEventListener('canplay', attemptAutoplay, { once: true });
-                }
+                console.log("Stream loaded successfully");
             } catch (error) {
                 console.error('Load error:', error);
             }
-
-            ['click', 'touchstart'].forEach(event => {
-                document.addEventListener(event, () => { if(video.muted) video.muted = false; }, { once: true });
-            });
         });
     </script>
 </body>
