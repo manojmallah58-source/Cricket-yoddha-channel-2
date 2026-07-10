@@ -3,48 +3,42 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="referrer" content="unsafe-url">
     <title>Sonu // Live Stream</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@5.1.8/dist/controls.css">
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-user-select:none;user-select:none}
-        .shaka-video-container{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center}
-        video{width:100%;height:100%;object-fit:contain;background:#000}
-        #loader{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:9;opacity:0;pointer-events:none;transition:opacity .2s}
-        #loader.on{opacity:1}
-        .spin{width:36px;height:36px;border:3px solid rgba(255,255,255,.15);border-top-color:#38bdf8;border-radius:50%;animation:sp .75s linear infinite}
-        @keyframes sp{to{transform:rotate(360deg)}}
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html, body { width:100%; height:100%; background:#000; overflow:hidden; font-family:sans-serif; }
+        .shaka-video-container { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; }
+        video { width:100%; height:100%; object-fit:contain; background:#000; }
     </style>
 </head>
 <body>
 
 <div class="shaka-video-container" id="pc">
     <video id="v" autoplay playsinline preload="metadata" crossorigin="anonymous"></video>
-    <div id="loader"><div class="spin"></div></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@5.1.8/dist/shaka-player.ui.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
-    shaka.polyfill.installAll();
     const video = document.getElementById('v');
     const container = document.getElementById('pc');
-    const loader = document.getElementById('loader');
+    
+    // Shaka Player Initialize
+    const player = new shaka.Player(video);
+    new shaka.ui.Overlay(player, container, video);
 
-    const player = new shaka.Player();
-    await player.attach(video);
-
-    // Vercel Proxy/CORS Handling
+    // Networking Filter - Ye Vercel ke liye zaroori hai
     player.getNetworkingEngine().registerRequestFilter((type, request) => {
-        request.allowCrossSiteCredentials = true;
-        // Referer ko force kar rahe hain
         request.headers['Referer'] = 'https://www.cricbuzz.com/';
-        request.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+        request.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
     });
 
     const STREAM_URL = 'https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/orxueyvu1q/out/v1/4f512a0c1bf2470c875bf8b26b563c80/cenc.mpd';
-    const clearKeys = { 'f52a13486b5aa72569ab1e6b45e7ec29': '41611477a72a4b932513c0b824ccae06' };
+    const clearKeys = { 
+        'f52a13486b5aa72569ab1e6b45e7ec29': '41611477a72a4b932513c0b824ccae06' 
+    };
 
     player.configure({
         drm: { clearKeys },
@@ -53,11 +47,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
         await player.load(STREAM_URL);
-        loader.style.display = 'none';
     } catch (e) {
-        console.error("Vercel Load Error:", e);
-        // Fallback: Agar load na ho toh loader ko hata dein
-        loader.style.display = 'none';
+        console.error("Player Load Error:", e);
+        // Agar error aaye toh ek baar page refresh ka hint de sakte hain
     }
 });
 </script>
