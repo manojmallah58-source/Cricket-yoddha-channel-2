@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>manoj // Live Stream</title>
+    <title>Sonu // Live Stream</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@5.1.8/dist/controls.css">
     <style>
-        body { margin: 0; background: #000; overflow: hidden; }
-        .shaka-video-container { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
-        video { width: 100%; height: 100%; object-fit: contain; }
+        body { margin:0; background:#000; overflow:hidden; }
+        .shaka-video-container { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; }
+        video { width:100%; height:100%; object-fit:contain; }
     </style>
 </head>
 <body>
@@ -21,37 +21,30 @@
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
     const video = document.getElementById('v');
-    const container = document.getElementById('pc');
     const player = new shaka.Player(video);
-    new shaka.ui.Overlay(player, container, video);
 
-    // Networking Filter: Vercel ke liye Proxy bypass
+    // FIX: Request Filter ko thoda aur smart banaya
     player.getNetworkingEngine().registerRequestFilter((type, request) => {
         request.headers['Referer'] = 'https://www.cricbuzz.com/';
         request.headers['Origin'] = 'https://www.cricbuzz.com';
-        request.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
-        
-        // Ye line Vercel par streaming ko block hone se bachati hai
-        request.allowCrossSiteCredentials = true;
     });
 
-    const STREAM_URL = 'https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/orxueyvu1q/out/v1/4f512a0c1bf2470c875bf8b26b563c80/cenc.mpd';
-    
+    // FIX: Yahan hum ek lightweight CORS Proxy ka use kar rahe hain
+    const TARGET_URL = 'https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/orxueyvu1q/out/v1/4f512a0c1bf2470c875bf8b26b563c80/cenc.mpd';
+    const PROXY_URL = 'https://corsproxy.io/?' + encodeURIComponent(TARGET_URL);
+
     player.configure({
         drm: {
             clearKeys: { 'f52a13486b5aa72569ab1e6b45e7ec29': '41611477a72a4b932513c0b824ccae06' }
-        },
-        streaming: {
-            // Low latency tuning for stable playback
-            rebufferingGoal: 2,
-            bufferingGoal: 10
         }
     });
 
     try {
-        await player.load(STREAM_URL);
+        await player.load(PROXY_URL);
     } catch (e) {
-        console.error("Player Error:", e);
+        console.error("Vercel Load Failed. Trying direct connection...");
+        // Agar proxy fail ho toh fallback direct url
+        await player.load(TARGET_URL);
     }
 });
 </script>
