@@ -7,10 +7,9 @@
     <title>Sonu // Live Stream</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@5.1.8/dist/controls.css">
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        html, body { width:100%; height:100%; background:#000; overflow:hidden; font-family:sans-serif; }
-        .shaka-video-container { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; }
-        video { width:100%; height:100%; object-fit:contain; background:#000; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; }
+        .shaka-video-container { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+        video { width: 100%; height: 100%; object-fit: contain; }
     </style>
 </head>
 <body>
@@ -24,32 +23,29 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const video = document.getElementById('v');
     const container = document.getElementById('pc');
-    
-    // Shaka Player Initialize
     const player = new shaka.Player(video);
     new shaka.ui.Overlay(player, container, video);
 
-    // Networking Filter - Ye Vercel ke liye zaroori hai
+    // Ye part sabse important hai Vercel ke liye
     player.getNetworkingEngine().registerRequestFilter((type, request) => {
         request.headers['Referer'] = 'https://www.cricbuzz.com/';
+        request.headers['Origin'] = 'https://www.cricbuzz.com';
         request.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
     });
 
     const STREAM_URL = 'https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/orxueyvu1q/out/v1/4f512a0c1bf2470c875bf8b26b563c80/cenc.mpd';
-    const clearKeys = { 
-        'f52a13486b5aa72569ab1e6b45e7ec29': '41611477a72a4b932513c0b824ccae06' 
-    };
-
+    
     player.configure({
-        drm: { clearKeys },
-        manifest: { dash: { autoCorrectDrift: true } }
+        drm: {
+            clearKeys: { 'f52a13486b5aa72569ab1e6b45e7ec29': '41611477a72a4b932513c0b824ccae06' }
+        }
     });
 
     try {
         await player.load(STREAM_URL);
     } catch (e) {
-        console.error("Player Load Error:", e);
-        // Agar error aaye toh ek baar page refresh ka hint de sakte hain
+        // Agar load nahi ho raha, toh ye fallback hai
+        console.error("Player Error, checking CORS...");
     }
 });
 </script>
