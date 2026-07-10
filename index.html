@@ -1,52 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream // Working</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@5.1.8/dist/controls.css">
+    <title>Video Player</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/shaka-player.ui.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/controls.min.css" crossorigin="anonymous">
     <style>
-        body { margin: 0; background: #000; }
-        .container { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
-        video { width: 100%; height: 100%; }
+        body { background-color: #000; margin: 0; }
+        .video-container { position: relative; width: 100%; height: 100vh; background-color: black; }
     </style>
 </head>
 <body>
 
-<div class="container" id="pc">
-    <video id="v" autoplay playsinline crossorigin="anonymous"></video>
-</div>
+    <div class="video-container">
+        <div data-shaka-player-container style="width: 100%; height: 100%;">
+            <video autoplay muted data-shaka-player id="video" style="width:100%; height:100%;"></video>
+        </div>
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/shaka-player@5.1.8/dist/shaka-player.ui.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', async () => {
-    const video = document.getElementById('v');
-    const player = new shaka.Player(video);
+    <script>
+        async function init() {
+            const video = document.getElementById("video");
+            const ui = video.ui;
+            const controls = ui.getControls();
+            const player = controls.getPlayer();
 
-    // Vercel ke liye Networking Engine Bypass
-    player.getNetworkingEngine().registerRequestFilter((type, request) => {
-        request.headers['Referer'] = 'https://www.cricbuzz.com/';
-        request.headers['Origin'] = 'https://www.cricbuzz.com';
-        request.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36';
-    });
+            // DRM Configuration
+            player.configure({
+                drm: {
+                    clearKeys: {
+                        'f52a13486b5aa72569ab1e6b45e7ec29': '41611477a72a4b932513c0b824ccae06'
+                    }
+                }
+            });
 
-    // Clear Keys
-    player.configure({
-        drm: {
-            clearKeys: { 'f52a13486b5aa72569ab1e6b45e7ec29': '41611477a72a4b932513c0b824ccae06' }
+            try {
+                await player.load("https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/orxueyvu1q/out/v1/4f512a0c1bf2470c875bf8b26b563c80/cenc.mpd");
+                console.log("Video loaded successfully");
+            } catch (error) {
+                console.error("Error code", error.code, "object", error);
+            }
         }
-    });
 
-    const STREAM_URL = 'https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/orxueyvu1q/out/v1/4f512a0c1bf2470c875bf8b26b563c80/cenc.mpd';
-
-    try {
-        await player.load(STREAM_URL);
-    } catch (e) {
-        console.log("Error detected, initiating fallback...");
-        // Fallback: Agar primary load na ho toh retry mechanism
-        setTimeout(() => player.load(STREAM_URL), 2000);
-    }
-});
-</script>
+        document.addEventListener("shaka-ui-loaded", init);
+    </script>
 </body>
 </html>
