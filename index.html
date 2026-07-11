@@ -1,146 +1,248 @@
-<html> 
-<meta charset="UTF-8"> 
-<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-<meta name="referrer" content="no-referrer"> 
-<title>TG_@Cricinsider365</title> 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/shaka-player.ui.min.js" crossorigin="anonymous"></script> 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/controls.min.css" crossorigin="anonymous"> 
-<style> 
-body { 
-background-color: #000; 
-margin: 0; 
-} 
+<html>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer"> <title>TG_@streamxcrick </title></title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/shaka-player.ui.min.js" crossorigin="anonymous"></script>    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/controls.min.css" crossorigin="anonymous">
+  <style>img{position:relative;right:130;bottom:10;margin:auto auto;max-width:20%;max-height:20%;object-fit:contain;pointer-events:none}.shaka-spinner-container{display:none}.uc{pointer-events:none}
+body{
+    background-color: #000;
+        }
+body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden; /* Prevent scrolling */
+            background-color: black; /* Set background to black */
+        }
+        #player-container {
+            position: absolute; /* Full-screen positioning */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: none; /* Hide cursor */
+        }
+        video {
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            object-fit: fit; /* Maintain aspect ratio */
+        }
 
-/* Container for video and logo */ 
-.video-container { 
-position: relative; 
-width: 100%; 
-height: 100%; 
-background-color: black; 
-} 
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
 
-/* Style for the logo */ 
-.logo { 
-position: absolute; 
-top: 10px; /* Adjust vertical position */ 
-left: 10px; /* Adjust horizontal position */ 
-z-index: 1; /* Ensure the logo appears above the video */ 
-max-width: 120px; /* Set maximum width for the logo */ 
-max-height: 120px; /* Set maximum height for the logo */ 
-pointer-events: none; /* Prevent interference with video controls */ 
-} 
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
 
-.shaka-spinner-container { 
-display: none; 
-} 
 
-.uc { 
-pointer-events: none; 
-} 
-</style> 
-</head> 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<body> 
-<div class="video-container"> 
-<img src="https://i.postimg.cc/fRSw4ZRD/IMG-20250925-223757.jpg" alt="Logo" class="logo"> 
+        #my-video {
+            width: 100%;
+            height: 100vh;
+            height: 100svh;
+        }
 
-<div data-shaka-player-container style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"> 
-<video autoplay muted data-shaka-player id="video" poster="https://i.postimg.cc/zX5R78S1/In-Shot-20250930-163713042.jpg" style="width:100%; height:100%;"></video> 
-</div> 
-</div> 
+        li a {
+            text-transform: capitalize;
 
-<script> 
-// Restrict iframe embedding 
-if (window.top !== window.self) { 
-window.addEventListener('DOMContentLoaded', function() { 
-// Clear the existing content 
-document.body.innerHTML = ''; 
+        }
 
-// Add custom message 
-const messageDiv = document.createElement('div'); 
-messageDiv.id = 'message'; 
-messageDiv.textContent = 'Ab to copy mat kar chutiye By @Cricinsider365'; 
+        video {
+            width: 100% !important;
+            height: 100vh;
+            height: 100svh !important;
+        }
 
-// Style the message 
-messageDiv.style.color = '#fff'; 
-messageDiv.style.backgroundColor = '#000'; 
-messageDiv.style.position = 'fixed'; 
-messageDiv.style.top = '50%'; 
-messageDiv.style.left = '50%'; 
-messageDiv.style.transform = 'translate(-50%, -50%)'; 
-messageDiv.style.padding = '20px'; 
-messageDiv.style.borderRadius = '10px'; 
-messageDiv.style.textAlign = 'center'; 
-messageDiv.style.fontFamily = 'Arial, sans-serif'; 
-messageDiv.style.fontSize = '20px'; 
+        .tg-banner {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #1da1f2, #0077b5);
+            border-radius: 12px;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-// Append the message to the body 
-document.body.appendChild(messageDiv); 
-}); 
-} 
+        .tg-banner:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
 
-async function init() { 
-const video = document.getElementById("video"); 
-const ui = video.ui; 
-const controls = ui.getControls(); 
-const player = controls.getPlayer(); 
+        .tg-banner img {
+            width: 36px;
+            height: 36px;
+            margin-right: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
 
-player.configure({ 
-drm: { 
-clearKeys: { 
-'f52a13486b5aa72569ab1e6b45e7ec29': "41611477a72a4b932513c0b824ccae06" 
-} 
-} 
-}); 
+        .tg-banner span {
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
 
-ui.configure({ 
-controlPanelElements: ["play_pause", "mute", "volume", "spacer", "time_and_duration", "quality", "fullscreen", "overflow_menu"], 
-volumeBarColors: { 
-base: "rgba(0, 0, 255, 1)", // Blue base color for the volume bar 
-level: "rgb(0, 255, 0)" // Green color for the volume level 
-}, 
-seekBarColors: { 
-base: "rgb(255, 0, 0)", // Red base color for the seek bar 
-buffered: "rgb(255, 255, 0)", // Yellow color for the buffered portion 
-played: "rgba(0, 128, 128, 1)" // Teal color for the played portion 
-} 
-}); 
-window.player = player; 
-window.ui = ui; 
+        .relative {
+            position: relative !important;
+            left: 0 !important;
+            top: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+        }
 
-player.addEventListener("error", onPlayerErrorEvent); 
-controls.addEventListener("error", onUIErrorEvent); 
+        .Top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
 
-try { 
-await player.load("https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/orxueyvu1q/out/v1/4f512a0c1bf2470c875bf8b26b563c80/cenc.mpd"); 
-console.log("The video has now been loaded!"); 
-} catch (error) { 
-onPlayerError(error); 
-} 
-} 
+        .Top h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #1da1f2;
+            margin-bottom: 1rem;
+            text-decoration: underline;
+        }
 
-function onPlayerErrorEvent(event) { 
-onPlayerError(event.detail); 
-} 
+        .Top p {
+            font-size: 1rem;
+            font-weight: 400;
+            margin-bottom: 0.2rem;
+            opacity: 0.7;
+        }
 
-function onPlayerError(error) { 
-console.error("Error code", error.code, "object", error); 
-} 
+        .Bottom {
+            display: flex;
+            flex-direction: column;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            margin: 0 auto;
+            max-width: 300px;
+        }
 
-function onUIErrorEvent(event) { 
-onPlayerError(event.detail); 
-} 
+Links, [3/22/2025 6:33 AM]
+.m2 {
+            margin-left: 2rem;
+            margin-top: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap:
 
-function initFailed() { 
-console.error("Unable to load the UI library!"); 
-} 
+0.5rem;
+        }
+</style>
+</head>
+<body bgcolor='white' style='margin:0'>
 
-document.addEventListener("shaka-ui-loaded", init); 
-document.addEventListener("shaka-ui-load-failed", initFailed); 
+<body>
+<body bgcolor="black" style="margin: 0;">
+<a href="https://t.me/+ZuUWKpI30Xo4N2Q1" class="tg-banner" target="_blank" rel="noopener noreferrer">
+        <img src="https://i.pinimg.com/originals/31/2a/f9/312af9235aadad69655688eaee97eabf.png" alt="Telegram Icon">
+        <span>@streamxcrick - Join!</span>
+        </a>
+    <div data-shaka-player-container style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+        <video autoplay muted data-shaka-player id=video poster=https://cxh.pages.dev/L.jpg style=width:100%;height:100%></video>
+    </div>
+    <script>
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
 
-if (confirm("Join For More Links!!")) { 
-window.location.href = "https://t.me/+IhSW51QysxU3NzY1"; 
-} 
-</script> 
-</body> 
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 'i' || e.key === 'I' || (e.shiftKey && e.key === 'I'))) {
+                e.preventDefault();
+            }
+        });
+
+
+        
+       if (confirm("Join For More Links!!")) {
+            window.location.href = "https://t.me/+ZuUWKpI30Xo4N2Q1";
+        }
+
+        async function init() {
+            const video = document.getElementById("video");
+            const ui = video.ui;
+            const controls = ui.getControls();
+            const player = controls.getPlayer();
+
+            player.configure({
+                drm: {
+                    clearKeys: {
+                'b05cbf8f6e33fd627d3d91b0e752b296':"3ff2a0592cf38abfe3b3d62d4828642a"
+                    }
+                }
+            });
+
+            ui.configure({
+                controlPanelElements: ["play_pause", "mute", "volume", "spacer", "time_and_duration", "quality", "fullscreen", "overflow_menu"],
+                volumeBarColors: {
+                    base: "rgba(0, 0, 255, 1)", // Blue base color for the volume bar
+                    level: "rgb(0, 255, 0)"     // Green color for the volume level
+                },
+                seekBarColors: {
+                    base: "rgb(255, 0, 0)",       // Red base color for the seek bar
+                    buffered: "rgb(255, 255, 0)", // Yellow color for the buffered portion
+                    played: "rgba(0, 128, 128, 1)" // Teal color for the played portion
+                }
+            });
+
+            window.player = player;
+            window.ui = ui;
+
+            player.addEventListener("error", onPlayerErrorEvent);
+            controls.addEventListener("error", onUIErrorEvent);
+
+            try {
+                await player.load("https://abgqjfuaaaaaaaampai5lenhffbu7.3a7ca8a7cf914f7c96b727ff8c197042.emt.cf.ww.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/fkfzq3qjmi/out/v1/6b7d5cebc0294e2390954737da8e70ea/cenc.mpd");
+                console.log("The video has now been loaded!");
+            } catch (error) {
+                onPlayerError(error); 
+            }
+        }
+
+        function onPlayerErrorEvent(event) {
+            onPlayerError(event.detail);
+        }
+
+        function onPlayerError(error) {
+            console.error("Error code", error.code, "object", error);
+        }
+
+        function onUIErrorEvent(event) {
+            onPlayerError(event.detail);
+        }
+
+        function initFailed() {
+            console.error("Unable to load the UI library!");
+        }
+
+        document.addEventListener("shaka-ui-loaded", init);
+        document.addEventListener("shaka-ui-load-failed", initFailed);
+    
+</script>
+    </body>
 </html>
