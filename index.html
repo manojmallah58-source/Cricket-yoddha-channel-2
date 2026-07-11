@@ -1,248 +1,139 @@
+<!DOCTYPE html>
 <html>
-<meta charset="UTF-8">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="no-referrer"> <title>TG_@streamxcrick </title></title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/shaka-player.ui.min.js" crossorigin="anonymous"></script>    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/controls.min.css" crossorigin="anonymous">
-  <style>img{position:relative;right:130;bottom:10;margin:auto auto;max-width:20%;max-height:20%;object-fit:contain;pointer-events:none}.shaka-spinner-container{display:none}.uc{pointer-events:none}
-body{
-    background-color: #000;
-        }
-body, html {
-            height: 100%;
-            margin: 0;
-            overflow: hidden; /* Prevent scrolling */
-            background-color: black; /* Set background to black */
-        }
-        #player-container {
-            position: absolute; /* Full-screen positioning */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            cursor: none; /* Hide cursor */
-        }
-        video {
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            object-fit: fit; /* Maintain aspect ratio */
-        }
-
-        body,
-        html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
+    <title>Sony Sports Ten 1 HD</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            background: #000;
+            height: 100vh;
+            width: 100vw;
             overflow: hidden;
+            font-family: system-ui, -apple-system, sans-serif;
         }
-
-        iframe {
+        .shaka-video-container {
+            position: absolute;
+            inset: 0;
             width: 100%;
             height: 100%;
-            border: 0;
         }
-
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        #my-video {
-            width: 100%;
-            height: 100vh;
-            height: 100svh;
-        }
-
-        li a {
-            text-transform: capitalize;
-
-        }
-
         video {
-            width: 100% !important;
-            height: 100vh;
-            height: 100svh !important;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            object-fit: contain;
         }
-
-        .tg-banner {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: linear-gradient(135deg, #1da1f2, #0077b5);
-            border-radius: 12px;
-            padding: 12px 18px;
-            display: flex;
-            align-items: center;
-            color: white;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .shaka-spinner-container,
+        .shaka-spinner,
+        .shaka-spinner-svg {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
         }
-
-        .tg-banner:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        .tg-banner img {
-            width: 36px;
-            height: 36px;
-            margin-right: 12px;
-            border-radius: 50%;
-            border: 2px solid white;
-        }
-
-        .tg-banner span {
-            font-size: 18px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-
-        .relative {
-            position: relative !important;
-            left: 0 !important;
-            top: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-        }
-
-        .Top {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .Top h1 {
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: #1da1f2;
-            margin-bottom: 1rem;
-            text-decoration: underline;
-        }
-
-        .Top p {
-            font-size: 1rem;
-            font-weight: 400;
-            margin-bottom: 0.2rem;
-            opacity: 0.7;
-        }
-
-        .Bottom {
-            display: flex;
-            flex-direction: column;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-            margin: 0 auto;
-            max-width: 300px;
-        }
-
-Links, [3/22/2025 6:33 AM]
-.m2 {
-            margin-left: 2rem;
-            margin-top: 0.5rem;
-            display: flex;
-            flex-direction: column;
-            gap:
-
-0.5rem;
-        }
-</style>
+    </style>
 </head>
-<body bgcolor='white' style='margin:0'>
-
 <body>
-<body bgcolor="black" style="margin: 0;">
-<a href="https://t.me/+ZuUWKpI30Xo4N2Q1" class="tg-banner" target="_blank" rel="noopener noreferrer">
-        <img src="https://i.pinimg.com/originals/31/2a/f9/312af9235aadad69655688eaee97eabf.png" alt="Telegram Icon">
-        <span>@streamxcrick - Join!</span>
-        </a>
-    <div data-shaka-player-container style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
-        <video autoplay muted data-shaka-player id=video poster=https://cxh.pages.dev/L.jpg style=width:100%;height:100%></video>
+    <div class="shaka-video-container" data-shaka-player>
+        <video autoplay playsinline preload="metadata" poster=""></video>
     </div>
+
     <script>
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
+        document.addEventListener('DOMContentLoaded', async () => {
+            shaka.polyfill.installAll();
 
-        
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 'i' || e.key === 'I' || (e.shiftKey && e.key === 'I'))) {
-                e.preventDefault();
+            if (!shaka.Player.isBrowserSupported()) {
+                console.error('Browser not supported');
+                return;
             }
-        });
 
+            const video = document.querySelector('video');
+            const player = new shaka.Player();
+            await player.attach(video);
 
-        
-       if (confirm("Join For More Links!!")) {
-            window.location.href = "https://t.me/+ZuUWKpI30Xo4N2Q1";
-        }
+            const container = document.querySelector('.shaka-video-container');
+            const ui = new shaka.ui.Overlay(player, container, video);
 
-        async function init() {
-            const video = document.getElementById("video");
-            const ui = video.ui;
-            const controls = ui.getControls();
-            const player = controls.getPlayer();
+            ui.configure({
+                controlPanelElements: [
+                    'play_pause', 'time_and_duration', 'mute', 'volume',
+                    'spacer', 'language', 'captions', 'picture_in_picture',
+                    'quality', 'fullscreen'
+                ],
+                volumeBarColors: { base: 'purple', level: 'purple' },
+                seekBarColors: { base: 'white', buffered: 'red', played: 'blue' }
+            });
+
+            // UPDATED: New Stream URL and DRM Configuration
+            let streamUrl = "https://jiotvpllive.cdn.jio.com/bpk-tv/SonySportsTen1HDSTB_BTS/WDVLive/index.mpd?__hdnea__=st=1783773049~exp=1783794649~acl=/bpk-tv/SonySportsTen1HDSTB_BTS/WDVLive/*~hmac=665c35d4cc80abae9ad220f3bdeed3178494f1875c9b4f038e9336ac1f71c48e";
+            
+            let drmConfig = {
+                clearKeys: {
+                    "8619386d035251ad9340fc40879a52c6": "9c5fb4a4f95089d9d1a3dc19b0d06e47"
+                }
+            };
+            
+            let cookieHeader = "__hdnea__=st=1783773049~exp=1783794649~acl=/bpk-tv/SonySportsTen1HDSTB_BTS/WDVLive/*~hmac=665c35d4cc80abae9ad220f3bdeed3178494f1875c9b4f038e9336ac1f71c48e";
 
             player.configure({
-                drm: {
-                    clearKeys: {
-                'b05cbf8f6e33fd627d3d91b0e752b296':"3ff2a0592cf38abfe3b3d62d4828642a"
+                drm: drmConfig,
+                streaming: {
+                    lowLatencyMode: true,
+                    bufferingGoal: 15,
+                    rebufferingGoal: 2,
+                    bufferBehind: 15,
+                    retryParameters: {
+                        timeout: 10000,
+                        maxAttempts: 5,
+                        baseDelay: 300,
+                        backoffFactor: 1.2
                     }
                 }
             });
 
-            ui.configure({
-                controlPanelElements: ["play_pause", "mute", "volume", "spacer", "time_and_duration", "quality", "fullscreen", "overflow_menu"],
-                volumeBarColors: {
-                    base: "rgba(0, 0, 255, 1)", // Blue base color for the volume bar
-                    level: "rgb(0, 255, 0)"     // Green color for the volume level
-                },
-                seekBarColors: {
-                    base: "rgb(255, 0, 0)",       // Red base color for the seek bar
-                    buffered: "rgb(255, 255, 0)", // Yellow color for the buffered portion
-                    played: "rgba(0, 128, 128, 1)" // Teal color for the played portion
+            player.getNetworkingEngine().registerRequestFilter((type, request) => {
+                request.headers['Referer'] = 'https://www.jiotv.com/';
+                request.headers['User-Agent'] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+                request.headers['Cookie'] = cookieHeader;
+
+                if ((type === shaka.net.NetworkingEngine.RequestType.MANIFEST || 
+                     type === shaka.net.NetworkingEngine.RequestType.SEGMENT) && 
+                    request.uris[0] && !request.uris[0].includes('__hdnea=')) {
+                    const separator = request.uris[0].includes('?') ? '&' : '?';
+                    request.uris[0] += separator + cookieHeader;
                 }
             });
 
-            window.player = player;
-            window.ui = ui;
+            const attemptAutoplay = async () => {
+                try {
+                    video.muted = false;
+                    await video.play();
+                } catch (error) {
+                    video.muted = true;
+                    await video.play();
+                }
+            };
 
-            player.addEventListener("error", onPlayerErrorEvent);
-            controls.addEventListener("error", onUIErrorEvent);
+            player.addEventListener('error', (event) => console.error('Shaka Player Error:', event.detail));
 
             try {
-                await player.load("https://abgqjfuaaaaaaaampai5lenhffbu7.3a7ca8a7cf914f7c96b727ff8c197042.emt.cf.ww.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/fkfzq3qjmi/out/v1/6b7d5cebc0294e2390954737da8e70ea/cenc.mpd");
-                console.log("The video has now been loaded!");
+                await player.load(streamUrl);
+                if (video.readyState >= 3) {
+                    await attemptAutoplay();
+                } else {
+                    video.addEventListener('canplay', attemptAutoplay, { once: true });
+                }
             } catch (error) {
-                onPlayerError(error); 
+                console.error('Load error:', error);
             }
-        }
 
-        function onPlayerErrorEvent(event) {
-            onPlayerError(event.detail);
-        }
-
-        function onPlayerError(error) {
-            console.error("Error code", error.code, "object", error);
-        }
-
-        function onUIErrorEvent(event) {
-            onPlayerError(event.detail);
-        }
-
-        function initFailed() {
-            console.error("Unable to load the UI library!");
-        }
-
-        document.addEventListener("shaka-ui-loaded", init);
-        document.addEventListener("shaka-ui-load-failed", initFailed);
-    
-</script>
-    </body>
+            ['click', 'touchstart'].forEach(event => {
+                document.addEventListener(event, () => { if(video.muted) video.muted = false; }, { once: true });
+            });
+        });
+    </script>
+</body>
 </html>
