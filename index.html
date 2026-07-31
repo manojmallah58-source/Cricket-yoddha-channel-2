@@ -27,6 +27,7 @@
       background: #000;  
       object-fit: contain;  
     }  
+    /* Shaka Spinner Hiding */
     .shaka-spinner-container,  
     .shaka-spinner,  
     .shaka-spinner-svg {  
@@ -38,7 +39,7 @@
 </head>  
 <body>  
   <div class="shaka-video-container" data-shaka-player>  
-    <video autoplay playsinline preload="metadata" poster="https://assets.tntsports.io/web/img/og/tntsports.jpg"></video>  
+    <video autoplay playsinline preload="metadata" poster="https://i.ibb.co/VrsnMcD/image-search-1765615733453.webp"></video>  
   </div>  
   
   <script>  
@@ -65,7 +66,7 @@
         ],  
         volumeBarColors: {  
           base: 'rgba(255, 192, 203, 0.3)',  
-          level: 'rgb(255, 105, 180)'  
+          level: 'rgb(255, 105, 180)'
         },  
         seekBarColors: {  
           base: 'rgba(255, 255, 0, 0.3)',  
@@ -74,13 +75,14 @@
         }  
       });  
   
-      // ✅ Your DRM Key + MPD URL  
+      // ✅ UPDATED DRM Key (Key ID:Value)
       let drmConfig = {  
         clearKeys: {  
           "529c307261c44946987c68fb4330cb86": "b150ca8bf4dde7f676f7f98ac07d20dd"  
         }  
       };  
   
+      // ✅ UPDATED MPD URL (Query parameters removed)
       let streamUrl = "https://in-mc-flive.fancode.com/mumbai/4248192_english_dash_16779_1drmta-di_h264/index.mpd";  
   
       player.configure({  
