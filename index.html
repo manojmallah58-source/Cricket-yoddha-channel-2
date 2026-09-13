@@ -68,16 +68,17 @@
             });
 
             // Stream URL for Sony MAX
-            const streamUrl = "https://jiotvmblive.cdn.jio.com/bpk-tv/SonyMAX_MOB/WDVLive/index.mpd?__hdnea__=st=1789303905~exp=1789325505~acl=/*~hmac=a1bbdd6394d53b73ab882c65d022bd44d478bc433a11341430b4ed37a481143d";
+            let streamUrl = "https://jiotvmblive.cdn.jio.com/bpk-tv/SonyMAX_MOB/WDVLive/index.mpd?__hdnea__=st=1789303905~exp=1789325505~acl=/*~hmac=a1bbdd6394d53b73ab882c65d022bd44d478bc433a11341430b4ed37a481143d";
             
-            // ClearKey DRM Configuration (kid: key format)
-            const drmConfig = {
+            // ClearKey DRM Configuration
+            let drmConfig = {
                 clearKeys: {
                     "9d2bfb4c9aa45ac488bd92ec0e351217": "c980b395f0be528c4233417ef6305274"
                 }
             };
             
-            const tokenQuery = "__hdnea__=st=1789303905~exp=1789325505~acl=/*~hmac=a1bbdd6394d53b73ab882c65d022bd44d478bc433a11341430b4ed37a481143d";
+            // Cookie / Token header configuration
+            let cookieHeader = "__hdnea__=st=1789303905~exp=1789325505~acl=/*~hmac=a1bbdd6394d53b73ab882c65d022bd44d478bc433a11341430b4ed37a481143d";
 
             player.configure({
                 drm: drmConfig,
@@ -95,14 +96,16 @@
                 }
             });
 
-            // Improved request filter to correctly append tokens to segments/manifests without conflicts
             player.getNetworkingEngine().registerRequestFilter((type, request) => {
                 request.headers['Referer'] = 'https://www.jiotv.com/';
                 request.headers['User-Agent'] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
+                request.headers['Cookie'] = cookieHeader;
 
-                if (request.uris[0] && !request.uris[0].includes('__hdnea__')) {
+                if ((type === shaka.net.NetworkingEngine.RequestType.MANIFEST || 
+                     type === shaka.net.NetworkingEngine.RequestType.SEGMENT) && 
+                    request.uris[0] && !request.uris[0].includes('__hdnea=')) {
                     const separator = request.uris[0].includes('?') ? '&' : '?';
-                    request.uris[0] += separator + tokenQuery;
+                    request.uris[0] += separator + cookieHeader;
                 }
             });
 
@@ -116,9 +119,7 @@
                 }
             };
 
-            player.addEventListener('error', (event) => {
-                console.error('Shaka Player Error Code:', event.detail.code, 'Category:', event.detail.category);
-            });
+            player.addEventListener('error', (event) => console.error('Shaka Player Error:', event.detail));
 
             try {
                 await player.load(streamUrl);
