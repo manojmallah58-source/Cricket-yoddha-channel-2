@@ -67,17 +67,17 @@
                 seekBarColors: { base: 'white', buffered: 'red', played: 'blue' }
             });
 
-            // UPDATED: Stream URL for Sony MAX
-            let streamUrl = "https://jiotvmblive.cdn.jio.com/bpk-tv/SonyMAX_MOB/WDVLive/index.mpd?__hdnea__=st=1789303905~exp=1789325505~acl=/*~hmac=a1bbdd6394d53b73ab882c65d022bd44d478bc433a11341430b4ed37a481143d";
+            // Stream URL for Sony MAX
+            const streamUrl = "https://jiotvmblive.cdn.jio.com/bpk-tv/SonyMAX_MOB/WDVLive/index.mpd?__hdnea__=st=1789303905~exp=1789325505~acl=/*~hmac=a1bbdd6394d53b73ab882c65d022bd44d478bc433a11341430b4ed37a481143d";
             
-            // UPDATED: ClearKey DRM Configuration (kid: key)
-            let drmConfig = {
+            // ClearKey DRM Configuration (kid: key format)
+            const drmConfig = {
                 clearKeys: {
                     "9d2bfb4c9aa45ac488bd92ec0e351217": "c980b395f0be528c4233417ef6305274"
                 }
             };
             
-            let tokenQuery = "__hdnea__=st=1789303905~exp=1789325505~acl=/*~hmac=a1bbdd6394d53b73ab882c65d022bd44d478bc433a11341430b4ed37a481143d";
+            const tokenQuery = "__hdnea__=st=1789303905~exp=1789325505~acl=/*~hmac=a1bbdd6394d53b73ab882c65d022bd44d478bc433a11341430b4ed37a481143d";
 
             player.configure({
                 drm: drmConfig,
@@ -95,6 +95,7 @@
                 }
             });
 
+            // Improved request filter to correctly append tokens to segments/manifests without conflicts
             player.getNetworkingEngine().registerRequestFilter((type, request) => {
                 request.headers['Referer'] = 'https://www.jiotv.com/';
                 request.headers['User-Agent'] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
@@ -115,7 +116,9 @@
                 }
             };
 
-            player.addEventListener('error', (event) => console.error('Shaka Player Error:', event.detail));
+            player.addEventListener('error', (event) => {
+                console.error('Shaka Player Error Code:', event.detail.code, 'Category:', event.detail.category);
+            });
 
             try {
                 await player.load(streamUrl);
@@ -135,4 +138,3 @@
     </script>
 </body>
 </html>
-
