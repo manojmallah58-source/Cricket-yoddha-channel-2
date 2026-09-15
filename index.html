@@ -1,204 +1,349 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Fox 501 · Plyr</title>
-    <!-- Plyr CSS (v3.7.8) -->
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-    <style>
-        /* reset & fullscreen bedrock */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        html, body {
-            width: 100%;
-            height: 100%;
-            background: #0b0b0b;
-            overflow: hidden;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-        }
-        .player-wrapper {
-            width: 100vw;
-            height: 100vh;
-            max-width: 100%;
-            max-height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #000;
-        }
-        #foxPlayer {
-            width: 100%;
-            height: 100%;
-            max-width: 100%;
-            max-height: 100%;
-            background: #000;
-        }
-        .plyr--video {
-            background: #000;
-        }
-        /* ===== PREMIUM RED PROGRESS BAR ===== */
-        .plyr__progress__buffer,
-        .plyr__progress__buffer::-webkit-progress-bar {
-            background: rgba(255, 255, 255, 0.15) !important;
-        }
-        .plyr__progress__played,
-        .plyr__progress__played::-webkit-progress-value {
-            background: #e50914 !important;
-            background-image: linear-gradient(135deg, #ff1a1a, #cc0000) !important;
-            box-shadow: 0 0 12px #e50914aa, 0 0 4px #ff4d4d80 !important;
-            transition: background 0.1s ease;
-        }
-        .plyr__progress__thumb {
-            background: #e50914 !important;
-            box-shadow: 0 0 16px #e50914, 0 0 6px #ff6666 !important;
-            border: 2px solid #fff !important;
-            transition: box-shadow 0.2s;
-        }
-        .plyr__progress__thumb:hover {
-            box-shadow: 0 0 24px #ff3333, 0 0 12px #ff9999 !important;
-        }
-        .plyr__volume input[type="range"]::-webkit-slider-runnable-track,
-        .plyr__volume input[type="range"]::-moz-range-track {
-            background: rgba(255,255,255,0.2) !important;
-        }
-        .plyr__volume input[type="range"]::-webkit-slider-thumb {
-            background: #e50914 !important;
-            box-shadow: 0 0 8px #e50914 !important;
-        }
-        .player-wrapper video {
-            object-fit: contain;
-            background: #000;
-        }
-        .plyr__control[aria-pressed="true"] {
-            background: #e50914 !important;
-        }
-        .plyr__control:hover {
-            background: #e50914 !important;
-        }
-        .plyr__progress input[type="range"]::-webkit-slider-runnable-track {
-            background: rgba(255,255,255,0.2) !important;
-        }
-        .plyr__progress input[type="range"]::-webkit-slider-thumb {
-            background: #e50914 !important;
-            box-shadow: 0 0 20px #e50914cc !important;
-        }
-        .plyr__progress input[type="range"]::-moz-range-thumb {
-            background: #e50914 !important;
-            border: 2px solid white !important;
-            box-shadow: 0 0 16px #e50914 !important;
-        }
-        .plyr__progress input[type="range"]::-moz-range-progress {
-            background: #e50914 !important;
-        }
-        .plyr__menu__container .plyr__control[role="menuitem"] .plyr__menu__value {
-            color: #fff !important;
-        }
-    </style>
+  <title>Fox Cricket · always pause first, then resume</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <meta name="referrer" content="no-referrer"/>
+  <!-- Plyr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css"/>
+  <!-- HLS.js -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <!-- Plyr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.js"></script>
+  <style>
+    :root {
+      --plyr-color-main: #e50914;
+    }
+    body {
+      background-color: #000;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+    .video-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+    .plyr {
+      height: 100%;
+      width: 100%;
+    }
+    /* --- Center play/pause button --- */
+    .center-toggle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(229, 9, 20, 0.85);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.15s ease;
+      z-index: 20;
+    }
+    .center-toggle.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .center-toggle:active {
+      transform: translate(-50%, -50%) scale(0.92);
+    }
+    .center-toggle svg {
+      width: 32px;
+      height: 32px;
+      fill: #fff;
+    }
+    /* --- Frozen frame, shown instead of a black flash while buffering --- */
+    #freezeFrame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: none;
+      z-index: 5;
+      pointer-events: none;
+    }
+    /* --- Mute / unmute indicator --- */
+    .mute-indicator {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.65);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      z-index: 25;
+    }
+    .mute-indicator.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .mute-indicator svg {
+      width: 26px;
+      height: 26px;
+      fill: #fff;
+    }
+    /* --- Auto-hide controls after inactivity --- */
+    .video-container.hide-controls .plyr__controls {
+      opacity: 0 !important;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .plyr__controls {
+      transition: opacity 0.4s ease;
+    }
+  </style>
 </head>
 <body>
-    <div class="player-wrapper">
-        <video id="foxPlayer" playsinline crossorigin>
-            <source src="https://ingest4-9869.boxcast.com/satisfying-year/dhii6vrqpq5jdgsbz3cy/1080p-byteranges-ext.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9pbmdlc3Q0LTk4NjkuYm94Y2FzdC5jb20vc2F0aXNmeWluZy15ZWFyL2RoaWk2dnJxcHE1amRnc2J6M2N5LzEwODBwLWJ5dGVyYW5nZXMtZXh0Lm0zdTgiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MTYwNTd9fX1dfQ&Signature=qXFLEwc8QLm6LZD6Ezj1yPuxKTRMX6CO0JHLSmB9N3XMon~FhV4gnEm2es741WirywgDzZ-W2OL6mdosWi1gkGEUDaN9DPmik6VrNGf31gcMirQPtq5fDOJ-~-Oq0PxEezc97NvdE4myKkULsb7Ic3OKZxLXUq1tpcp8CUMeANssqSyeYbAiVNKI8qtSGlFAd24Upj88w-wTnLy~~EaTCD7g2DCgKQjuUGVhkfBOeiThuRPWT1I0jL3qTTEdxNwkuPlLlKE34FrfV6-JAlcmyi6irz1~NogdLDu6IsVX1O8ypDdB3RWi7Y-~rTv89FgLoJl8eqFpN0DNifWsCQVkzw&Key-Pair-Id=APKAJ7GUCBQUK6NTWZCA" type="application/vnd.apple.mpegurl" />
-            <p>Your browser does not support HLS. Please use a modern browser.</p>
-        </video>
+  <div class="video-container" id="videoContainer">
+    <video autoplay playsinline muted id="player" controls preload="metadata"></video>
+    <canvas id="freezeFrame"></canvas>
+    <button class="center-toggle" id="centerToggle" aria-label="Play or pause">
+      <svg id="centerIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <div class="mute-indicator" id="muteIndicator">
+      <svg id="muteIcon" viewBox="0 0 24 24"></svg>
     </div>
-    
-    <!-- Plyr JS + HLS -->
-    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@0.14.17/dist/hls.min.js"></script>
-    
-    <script>
-        (function() {
-            const video = document.getElementById('foxPlayer');
-            const streamUrl = 'https://ingest4-9869.boxcast.com/satisfying-year/dhii6vrqpq5jdgsbz3cy/1080p-byteranges-ext.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9pbmdlc3Q0LTk4NjkuYm94Y2FzdC5jb20vc2F0aXNmeWluZy15ZWFyL2RoaWk2dnJxcHE1amRnc2J6M2N5LzEwODBwLWJ5dGVyYW5nZXMtZXh0Lm0zdTgiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MTYwNTd9fX1dfQ&Signature=qXFLEwc8QLm6LZD6Ezj1yPuxKTRMX6CO0JHLSmB9N3XMon~FhV4gnEm2es741WirywgDzZ-W2OL6mdosWi1gkGEUDaN9DPmik6VrNGf31gcMirQPtq5fDOJ-~-Oq0PxEezc97NvdE4myKkULsb7Ic3OKZxLXUq1tpcp8CUMeANssqSyeYbAiVNKI8qtSGlFAd24Upj88w-wTnLy~~EaTCD7g2DCgKQjuUGVhkfBOeiThuRPWT1I0jL3qTTEdxNwkuPlLlKE34FrfV6-JAlcmyi6irz1~NogdLDu6IsVX1O8ypDdB3RWi7Y-~rTv89FgLoJl8eqFpN0DNifWsCQVkzw&Key-Pair-Id=APKAJ7GUCBQUK6NTWZCA';
-            
-            if (Hls.isSupported()) {
-                const hls = new Hls({
-                    enableWorker: true,
-                    lowLatencyMode: true,
-                });
-                hls.loadSource(streamUrl);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play().catch(e => console.warn('Autoplay prevented:', e));
-                });
-                hls.on(Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) {
-                        switch (data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
-                                hls.startLoad();
-                                break;
-                            case Hls.ErrorTypes.MEDIA_ERROR:
-                                hls.recoverMediaError();
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = streamUrl;
-                video.addEventListener('loadedmetadata', function() {
-                    video.play().catch(e => console.warn('Autoplay blocked:', e));
-                });
-            } else {
-                console.warn('HLS not supported');
-            }
-
-            const player = new Plyr(video, {
-                controls: [
-                    'play-large', 'play', 'progress', 'current-time', 
-                    'duration', 'mute', 'volume', 'settings', 'fullscreen'
-                ],
-                quality: {
-                    default: 0,
-                    options: [1080, 720, 540, 480, 360, 240],
-                    forced: false,
-                    onChange: (quality) => {}
-                },
-                i18n: {
-                    play: 'Play', pause: 'Pause', mute: 'Mute', unmute: 'Unmute',
-                    settings: 'Settings', enterFullscreen: 'Fullscreen',
-                    exitFullscreen: 'Exit fullscreen', speed: 'Speed',
-                    normal: 'Normal', quality: 'Quality', loop: 'Loop',
-                },
-                logo: false,
-                tooltips: false,
-                keyboard: true,
-                autoplay: true,
-                blankVideo: '',
-                hideControls: false,
-                resetOnEnd: false,
-                ratio: '16:9',
-                fullscreen: { enabled: true, fallback: true },
-                storage: { enabled: false },
-            });
-
-            const container = player.elements.container;
-            if (container) {
-                container.style.width = '100%';
-                container.style.height = '100%';
-            }
-
-            window.addEventListener('resize', function() {
-                if (player) {
-                    player.elements.container.style.width = '100%';
-                    player.elements.container.style.height = '100%';
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const video = document.getElementById("player");
+      const container = document.getElementById("videoContainer");
+      const centerToggle = document.getElementById("centerToggle");
+      const centerIcon = document.getElementById("centerIcon");
+      const muteIndicator = document.getElementById("muteIndicator");
+      const muteIcon = document.getElementById("muteIcon");
+      const PLAY_ICON = '<path d="M8 5v14l11-7z"/>';
+      const PAUSE_ICON = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
+      const MUTE_ICON = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+      const UNMUTE_ICON = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+      const MUTE_STORAGE_KEY = "foxCricketMuted";
+      const PLAYBACK_STORAGE_KEY = "foxCricketHasVisited";
+      const source = "https://play.boxcast.com/p/psnzgzfg4vgkvej2elbb/v/all-byteranges-ext.m3u8?Expires=1789591552&Signature=cuW1HK7EVNhLVHrgt0ExuR~EVs1PmVnCZnaPrXKN4rBPMqaIiMNpDGdM-fxzTTohO2uU-IUYzxRt5uumDWPhHiX~HrEOggXrvLP2RqToQ~9N4yYegn1uFG5L~P4OIw7G4RkvyYAaRjId~m-GAwerwxSEGpeJoN7OUQrTzeWyi-xsB9N~ljzEQT4GNm9hF~IIP-FpdOUmlb8lON~YCXmKjwsGuMIR2RI0o97XEbCBW3Emz2eNZubVx6axtJePHZVQvoGZefzHsJRLjcbdnS0X~ac6r4W~sbn4AGRPrjfowW7nPPKMtNLeOXwrrOQF8my5vNuXJHLLpaV02Ohyh8ZWAg__&Key-Pair-Id=APKAJ7GUCBQUK6NTWZCA";
+      const defaultOptions = {
+        autoplay: false,
+        clickToPlay: true,
+        controls: [
+          'play', 'rewind', 'fast-forward', 'progress', 'current-time',
+          'mute', 'volume', 'settings', 'fullscreen'
+        ],
+        settings: ['quality']
+      };
+      let player;
+      let userPaused = true; 
+      let isFirstVisit = true;
+      function hasVisitedBefore() {
+        try {
+          return localStorage.getItem(PLAYBACK_STORAGE_KEY) === "true";
+        } catch (e) {
+          return false;
+        }
+      }
+      function markVisited() {
+        try {
+          localStorage.setItem(PLAYBACK_STORAGE_KEY, "true");
+        } catch (e) {}
+      }
+      function getSavedMutePref() {
+        const stored = localStorage.getItem(MUTE_STORAGE_KEY);
+        return stored === null ? true : stored === "true";
+      }
+      function saveMutePref(isMuted) {
+        localStorage.setItem(MUTE_STORAGE_KEY, isMuted ? "true" : "false");
+      }
+      let muteIndicatorTimer;
+      function flashMuteIndicator(isMuted) {
+        muteIcon.innerHTML = isMuted ? MUTE_ICON : UNMUTE_ICON;
+        muteIndicator.classList.add("visible");
+        clearTimeout(muteIndicatorTimer);
+        muteIndicatorTimer = setTimeout(() => {
+          muteIndicator.classList.remove("visible");
+        }, 1200);
+      }
+      let controlsHideTimer;
+      function showControlsAndResetTimer() {
+        container.classList.remove("hide-controls");
+        clearTimeout(controlsHideTimer);
+        controlsHideTimer = setTimeout(() => {
+          if (!video.paused) {
+            container.classList.add("hide-controls");
+          }
+        }, 5000);
+      }
+      ["mousemove", "mousedown", "touchstart", "click", "keydown"].forEach(evt => {
+        container.addEventListener(evt, showControlsAndResetTimer, { passive: true });
+      });
+      function setupPlayer(hls, qualities = []) {
+        player = new Plyr(video, {
+          ...defaultOptions,
+          quality: qualities.length ? {
+            default: qualities[0],
+            options: qualities,
+            forced: true,
+            onChange: q => {
+              hls.levels.forEach((level, index) => {
+                if (level.height === q) {
+                  hls.currentLevel = index;
                 }
-            });
-
-            window.player = player;
-
-            if (Hls.isSupported()) {
-                const hlsInstance = video.hlsInstance || hls;
-                window.hlsInstance = hlsInstance;
-                hlsInstance.on(Hls.Events.LEVEL_SWITCHED, function(event, data) {});
+              });
             }
-        })();
-    </script>
+          } : {}
+        });
+        video.pause();
+        video.muted = getSavedMutePref();
+        if (!video.muted) {
+          video.volume = 1;
+        }
+        centerIcon.innerHTML = PLAY_ICON;
+        centerToggle.classList.add('visible');
+        showControlsAndResetTimer();
+        const freezeCanvas = document.getElementById('freezeFrame');
+        const freezeCtx = freezeCanvas.getContext('2d');
+        let freezeRAF;
+        function captureFrame() {
+          if (video.videoWidth && video.videoHeight) {
+            freezeCanvas.width = video.videoWidth;
+            freezeCanvas.height = video.videoHeight;
+            try {
+              freezeCtx.drawImage(video, 0, 0, freezeCanvas.width, freezeCanvas.height);
+            } catch (e) {}
+          }
+        }
+        function keepCapturing() {
+          captureFrame();
+          freezeRAF = requestAnimationFrame(keepCapturing);
+        }
+        function showFreeze() {
+          captureFrame();
+          freezeCanvas.style.display = 'block';
+        }
+        function hideFreeze() {
+          freezeCanvas.style.display = 'none';
+        }
+        keepCapturing();
+        player.on('waiting', showFreeze);
+        player.on('stalled', showFreeze);
+        player.on('seeking', showFreeze);
+        player.on('playing', hideFreeze);
+        let hideTimer;
+        function showCenter() {
+          centerToggle.classList.add('visible');
+        }
+        function showCenterBriefly() {
+          showCenter();
+          clearTimeout(hideTimer);
+          hideTimer = setTimeout(() => centerToggle.classList.remove('visible'), 700);
+        }
+        centerToggle.addEventListener('click', () => {
+          player.togglePlay();
+          showControlsAndResetTimer();
+          markVisited();
+        });
+        player.on('pause', () => {
+          userPaused = true;
+          centerIcon.innerHTML = PLAY_ICON;
+          clearTimeout(hideTimer);
+          showCenter();
+          showControlsAndResetTimer();
+        });
+        player.on('play', () => {
+          userPaused = false;
+          centerIcon.innerHTML = PAUSE_ICON;
+          showCenterBriefly();
+          showControlsAndResetTimer();
+          markVisited();
+        });
+        video.addEventListener('volumechange', () => {
+          saveMutePref(video.muted);
+          flashMuteIndicator(video.muted);
+        });
+        if (hasVisitedBefore()) {
+          setTimeout(() => {
+            video.play().catch(() => {});
+          }, 300);
+        } else {
+          video.pause();
+          markVisited();
+        }
+        setInterval(() => {
+          if (video.paused && !userPaused && video.readyState > 2 && hasVisitedBefore()) {
+            video.play().catch(() => {});
+          }
+        }, 3000);
+        const unmute = () => {
+          if (!getSavedMutePref()) {
+            video.muted = false;
+            video.volume = 1;
+          }
+          document.removeEventListener("click", unmute);
+          document.removeEventListener("touchstart", unmute);
+        };
+        document.addEventListener("click", unmute);
+        document.addEventListener("touchstart", unmute);
+      }
+      if (Hls.isSupported()) {
+        const hls = new Hls({
+          autoStartLoad: true
+        });
+        hls.loadSource(source);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
+          const availableQualities = data.levels.map(l => l.height).sort((a, b) => b - a);
+          if (!hasVisitedBefore()) {
+            video.pause();
+          } else {
+            setTimeout(() => video.play().catch(() => {}), 200);
+          }
+          setupPlayer(hls, availableQualities);
+        });
+        hls.on(Hls.Events.ERROR, function (_, data) {
+          if (data.fatal) {
+            hls.startLoad();
+          }
+        });
+      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        video.src = source;
+        video.addEventListener("loadedmetadata", () => {
+          if (!hasVisitedBefore()) {
+            video.pause();
+          } else {
+            setTimeout(() => video.play().catch(() => {}), 200);
+          }
+          setupPlayer(null);
+        });
+      }
+    });
+  </script>
 </body>
 </html>
