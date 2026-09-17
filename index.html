@@ -1,317 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Live Stream Player</title>
-    <meta name="referrer" content="no-referrer">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <!-- Plyr + HLS.js -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css" crossorigin="anonymous" />
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.min.js" crossorigin="anonymous"></script>
-    <style>
-        /* Reset & Fullscreen */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        html, body {
-            width: 100%;
-            height: 100%;
-            background: #000;
-            overflow: hidden;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
-        .player-container {
-            position: fixed;
-            inset: 0;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .plyr {
-            width: 100%;
-            height: 100%;
-        }
-        .plyr__video-wrapper {
-            height: 100%;
-        }
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            background: #000;
-        }
-        /* Custom watermark */
-        .custom-watermark {
-            position: absolute;
-            z-index: 40;
-            pointer-events: none;
-            bottom: 80px;
-            right: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.10);
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-        /* Loading overlay */
-        .loading-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            background: #000;
-            color: #fff;
-            z-index: 2000;
-            font-size: 18px;
-            pointer-events: none;
-        }
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, .15);
-            border-top: 4px solid #3b82f6;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 12px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        /* Plyr overrides for dark theme */
-        .plyr--video {
-            background: #000;
-        }
-        .plyr__controls {
-            background: rgba(0, 0, 0, 0.75) !important;
-            backdrop-filter: blur(8px);
-        }
-        .plyr__control--overlaid {
-            background: rgba(255, 59, 48, 0.9) !important;
-        }
-        .plyr__control--overlaid svg {
-            fill: #fff !important;
-        }
-        .plyr__progress__buffer {
-            background: rgba(255, 255, 255, 0.2) !important;
-        }
-        .plyr__progress__played {
-            background: #ff3b30 !important;
-        }
-        .plyr__menu__container {
-            background: rgba(20, 20, 20, 0.95) !important;
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 12px;
-        }
-        .plyr__menu__container .plyr__control--back {
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .plyr__volume input[type="range"] {
-            background: rgba(255,255,255,0.2) !important;
-        }
-        .plyr__volume input[type="range"]::-webkit-slider-thumb {
-            background: #ff3b30 !important;
-        }
-        .plyr__volume input[type="range"]::-moz-range-thumb {
-            background: #ff3b30 !important;
-        }
-        @media (max-width: 700px) {
-            .custom-watermark {
-                font-size: 9px;
-                bottom: 70px;
-                right: 14px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Full Page Player – No Gap</title>
+  <style>
+    /* Reset all margins, paddings, and gaps */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;          /* prevent scrollbars from any tiny overflow */
+      background-color: #000;    /* black background for seamless edges */
+    }
+    /* Full-page iframe container – fills entire viewport */
+    .player-wrapper {
+      position: fixed;           /* fix to viewport, ignores any body flow */
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #000;
+    }
+    /* The iframe itself – stretches to fill wrapper completely,
+       no border, no margin, no padding, no gaps */
+    .player-wrapper iframe {
+      display: block;            /* remove inline element gap */
+      width: 100%;
+      height: 100%;
+      border: 0;
+      margin: 0;
+      padding: 0;
+      /* aspect-ratio is intentionally removed so iframe fills 
+         exactly 100% height/width of wrapper (no letterboxing) */
+    }
+  </style>
 </head>
 <body>
-<div class="player-container" id="playerContainer">
-    <video id="video" autoplay playsinline preload="metadata"></video>
-    <div class="custom-watermark">LIVE · FANCODE</div>
-    <!-- Loading overlay -->
-    <div id="loading" class="loading-overlay">
-        <div class="spinner"></div>
-        Loading stream...
-    </div>
-</div>
-<script>
-    (function() {
-        'use strict';
-        /* ========== CONFIG ========== */
-        const STREAM_URL = "https://odd-art-347e.pakivac483-abf.workers.dev/";
-        const DOM = {
-            video: document.getElementById('video'),
-            container: document.getElementById('playerContainer'),
-            loading: document.getElementById('loading'),
-        };
-        let hlsInstance = null;
-        let plyrInstance = null;
-        let userPaused = false;
-        let isInitialized = false;
-
-        /* ========== HELPERS ========== */
-        function hideLoading() {
-            if (DOM.loading) DOM.loading.style.display = 'none';
-        }
-        function showLoading() {
-            if (DOM.loading) DOM.loading.style.display = 'flex';
-        }
-        function destroyPlayer() {
-            if (hlsInstance) {
-                try { hlsInstance.destroy(); } catch (_) {}
-                hlsInstance = null;
-            }
-            if (plyrInstance) {
-                try { plyrInstance.destroy(); } catch (_) {}
-                plyrInstance = null;
-            }
-        }
-
-        /* ========== PAUSE/RESUME LOGIC ========== */
-        function setupPauseResumeLogic(video) {
-            video.addEventListener('play', function() {
-                userPaused = false;
-            });
-            document.addEventListener('click', function(e) {
-                const pauseBtn = e.target.closest('.plyr__control--pressed') || 
-                                e.target.closest('.plyr__control[data-plyr="play"]');
-                if (pauseBtn) {
-                    userPaused = video.paused ? false : true;
-                }
-            });
-            video.addEventListener('pause', function() {
-                if (!video.ended && !userPaused && isInitialized) {
-                    setTimeout(() => {
-                        if (video.paused && !video.ended && !userPaused) {
-                            video.play().catch(() => {});
-                        }
-                    }, 500);
-                }
-                setTimeout(() => {
-                    userPaused = false;
-                }, 100);
-            });
-            setInterval(() => {
-                if (video.paused && !video.ended && !userPaused && isInitialized) {
-                    video.play().catch(() => {});
-                }
-            }, 3000);
-        }
-
-        /* ========== INIT PLAYER ========== */
-        async function initPlayer() {
-            const video = DOM.video;
-            showLoading();
-            destroyPlayer();
-            try {
-                if (Hls.isSupported()) {
-                    const hls = new Hls({
-                        maxMaxBufferLength: 100,
-                        liveSyncDurationCount: 3,
-                        liveMaxLatencyDurationCount: 6,
-                        enableWorker: true,
-                        xhrSetup: (xhr) => { xhr.withCredentials = false; }
-                    });
-                    hlsInstance = hls;
-                    hls.loadSource(STREAM_URL);
-                    hls.attachMedia(video);
-                    hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                        const levels = hls.levels
-                            .map(l => l.height)
-                            .filter(Boolean)
-                            .sort((a, b) => a - b);
-                        
-                        plyrInstance = new Plyr(video, {
-                            controls: [
-                                'play-large', 'play', 'progress', 'current-time',
-                                'mute', 'volume', 'settings', 'fullscreen'
-                            ],
-                            settings: ['quality'],
-                            quality: {
-                                default: levels[levels.length - 1] || 720,
-                                options: levels.length ? levels : [360, 480, 720, 1080],
-                                forced: true,
-                                onChange: (newQuality) => {
-                                    hls.levels.forEach((level, index) => {
-                                        if (level.height === newQuality) hls.currentLevel = index;
-                                    });
-                                }
-                            }
-                        });
-
-                        video.muted = false;
-                        isInitialized = true;
-                        
-                        video.play().catch(() => {
-                            video.muted = true;
-                            video.play().catch(() => {});
-                        });
-
-                        video.addEventListener('loadeddata', hideLoading);
-                        setTimeout(hideLoading, 3000);
-                        setupPauseResumeLogic(video);
-                    });
-                    hls.on(Hls.Events.ERROR, function(event, data) {
-                        if (data.fatal) {
-                            if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-                                hls.startLoad();
-                            } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-                                hls.recoverMediaError();
-                            } else {
-                                fallbackToNative(video);
-                            }
-                        }
-                    });
-                } else {
-                    fallbackToNative(video);
-                }
-            } catch (err) {
-                fallbackToNative(video);
-            }
-        }
-
-        /* ========== FALLBACK: Native HLS ========== */
-        function fallbackToNative(video) {
-            destroyPlayer();
-            video.src = STREAM_URL;
-            video.muted = false;
-            plyrInstance = new Plyr(video, {
-                controls: [
-                    'play-large', 'play', 'progress', 'current-time',
-                    'mute', 'volume', 'settings', 'fullscreen'
-                ]
-            });
-            isInitialized = true;
-            video.play().catch(() => {
-                video.muted = true;
-                video.play().catch(() => {});
-            });
-            video.addEventListener('loadeddata', hideLoading);
-            setTimeout(hideLoading, 3000);
-            setupPauseResumeLogic(video);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initPlayer();
-        });
-
-        document.addEventListener('visibilitychange', () => {
-            const video = DOM.video;
-            if (!document.hidden && video && video.paused && !video.ended && isInitialized) {
-                video.play().catch(() => {});
-            }
-        });
-    })();
-</script>
+  <div class="player-wrapper">
+    <iframe
+      src="https://cricket-yoddha.vercel.app/?url=https://fancodexeera.pages.dev/SportsEera.m3u8"
+      sandbox="allow-scripts allow-same-origin"
+      referrerpolicy="no-referrer"
+      allow="encrypted-media; fullscreen"
+      allowfullscreen
+      title="Full page video player"
+    ></iframe>
+  </div>
 </body>
 </html>
